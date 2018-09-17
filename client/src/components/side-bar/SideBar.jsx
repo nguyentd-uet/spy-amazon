@@ -5,6 +5,7 @@ import routes from '../../RouteConfig'
 
 export default class SideBar extends Component {
     render(){
+        const {userInfo} = this.props
         return (
             <aside className="main-sidebar">
                 <section className="sidebar">
@@ -13,7 +14,7 @@ export default class SideBar extends Component {
                             <img src={avatar} className="rounded-circle" alt="User avatar" />
                         </div>
                         <div className="float-left info">
-                            <p>Alexander Pierce</p>
+                            <p>{userInfo.username}</p>
                             <a href="#"><i className="fa fa-circle text-success"></i> Online</a>
                         </div>
                     </div>

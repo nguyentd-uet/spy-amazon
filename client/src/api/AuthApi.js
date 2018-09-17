@@ -8,4 +8,8 @@ function login(payload) {
     return postWithoutAuth('user/login', payload)
 }
 
-export { registerUser, login }
+function checkToken(token) {
+    return postWithoutAuth('user/checkToken', {token})
+}
+
+export { registerUser, login, checkToken }

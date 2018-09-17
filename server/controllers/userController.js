@@ -51,7 +51,7 @@ exports.login = function (req, res) {
                 email: user.email
             };
             const jwtToken = jwt.sign(payload, config.jwtSecret, {
-                expiresIn: '7d'
+                expiresIn: '1d'
             });
             console.log('jwtToken: ' + jwtToken);
             const jsonResponse = {
@@ -97,3 +97,28 @@ exports.getListUsers = function (req, res) {
         }
     })
 };
+
+// check token
+exports.checkToken = function (req, res) {
+    try {
+        var jwtToken = req.body.token;
+        jwt.verify(jwtToken, config.jwtSecret, function (err, payload) {
+            if (err) {
+                res.json({
+                    success: false,
+                    message: 'Token invalid'
+                });
+            } else {
+                res.json({
+                    success: true,
+                    message: 'Token valid'
+                })
+            }
+        });
+    } catch (error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
+}

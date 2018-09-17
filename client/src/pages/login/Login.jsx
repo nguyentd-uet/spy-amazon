@@ -29,7 +29,10 @@ export default class Login extends Component {
         const { email, password } = this.state
         if (email !== '' && password !== '') {
             login({...this.state})
-            .then(res => console.log(res))
+            .then(res => {
+                this.props.login(res.data)
+            })
+            .catch(err => alert(err))
         } else {
             alert('All fields required')
         }
@@ -83,7 +86,7 @@ export default class Login extends Component {
                     </div>
 
                     <a href="#">I forgot my password</a><br />
-                    <a href='#' className="text-center" onClick={() => this.onClickRegisterBtn()}>Register a new membership</a>
+                    <a href='#' className="text-center" onClick={this.onClickRegisterBtn}>Register a new membership</a>
 
                 </div>
             </div>

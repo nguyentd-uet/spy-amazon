@@ -43,7 +43,7 @@ function handleResponse(res) {
         return Promise.reject(new Error('Something went wrong'));
     } else {
         if (res.data.success) {
-            return Promise.resolve(res.data.data);
+            return Promise.resolve(res.data);
         } else {
             return Promise.reject(res.data.message);
         }

@@ -32,7 +32,10 @@ export default class Register extends Component {
         if (password !== '' && passwordConfirm !== '' && username !== '' && email !== '') {
             if (password === passwordConfirm) {
                 registerUser({...this.state})
-                .then(res => console.log(res))
+                .then(res => {
+                    alert(res.message)
+                })
+                .catch(err => alert(err))
             } else {
                 alert('Password Confirm invalid')
             }
@@ -42,7 +45,7 @@ export default class Register extends Component {
     }
 
     onClickRedirectToLogin(event) {
-        event.preventDefault
+        event.preventDefault()
         this.props.history.push('/login')
     }
 
@@ -106,7 +109,7 @@ export default class Register extends Component {
                             </div>
                         </div>
                         <div className="col-xs-4">
-                            <button className="btn btn-primary btn-block btn-flat" onClick={this.onClickRegisterBtn}>Register</button>
+                            <button className="btn btn-primary btn-block btn-flat" onClick={() => this.onClickRegisterBtn()}>Register</button>
                         </div>
                     </div>
                     <a href="#" className="text-center" onClick={this.onClickRedirectToLogin}>I already have a membership</a>
