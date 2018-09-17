@@ -1,25 +1,27 @@
 import React, { Component } from 'react';
 import Loadable from 'react-loadable'
 import Loading from './components/loading/Loading'
-import { Switch, Redirect, Route } from 'react-router-dom'
+import { Switch, Redirect } from 'react-router-dom'
 import PropsRoute from './components/PropsRoute'
 import Header from './components/header/Header'
 import SideBar from './components/side-bar/SideBar'
 import './App.css'
+import { flatConfig } from './RouteConfig'
+import Register from './pages/register/Register'
 
 const LoginLoadable = Loadable({
   loader: () => import('./pages/login/Login'),
   loading: Loading,
 });
 
-const DashboardLoadable = Loadable({
-  loader: () => import('./pages/main/dashboard/Dashboard'),
+const RegisterLoadable = Loadable({
+  loader: () => import('./pages/register/Register'),
   loading: Loading,
 });
 
 class App extends Component {
   state = {
-    isLogin: true
+    isLogin: false
   }
 
   login() {
@@ -43,9 +45,17 @@ class App extends Component {
           <div className="content-wrapper" style={{minHeight: window.innerHeight - 51}}>
             <section className="content-header">
               <Switch>
-                <Route exact path={'/dashboard'} component={DashboardLoadable}/>
-                <Route path={'/prices'} component={priceView}/>
-                <Route path={'/users'} component={userView}/>
+                {
+                  flatConfig.map((item, index) => {
+                    return (
+                      <PropsRoute 
+                        key={index}
+                        path={item.path} 
+                        component={item.component}
+                      />
+                    )
+                  })
+                }
 
                 <Redirect to='/dashboard' />
               </Switch>
@@ -58,6 +68,7 @@ class App extends Component {
         <div>
           <Switch>
             <PropsRoute exact path='/login' component={LoginLoadable} login={this.login.bind(this)} /> 
+            <PropsRoute path='/register' component={Register} /> 
 
             <Redirect to='/login' />
           </Switch>
@@ -66,18 +77,6 @@ class App extends Component {
     }
     
   }
-}
-
-const priceView = () => {
-  return <h1>price view</h1>
-}
-
-const userView = () => {
-  return <h1>user view</h1>
-}
-
-const dashboardView = () => {
-  return <h1>dashboard view</h1>
 }
 
 export default App;

@@ -47,7 +47,7 @@ export default class Header extends Component {
                                     <DropdownMenu>
                                         <DropdownItem>
                                             <div className="float-left">
-                                                <img src={avatar} className="rounded-circle" alt="User Image" />
+                                                <img src={avatar} className="rounded-circle" alt="User avatar" />
                                             </div>
                                             <div className="float-right">
                                                 <h4>
