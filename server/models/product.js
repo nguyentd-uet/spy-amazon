@@ -16,7 +16,10 @@ var ProductSchema = new mongoose.Schema({
     bullet2: String,
     thumbnail: String,
     keywords: [],
-    created_time: Date,
+    created_time: {
+        type: Date,
+        default: new Date()
+    },
     last_crawl_time: Date
 }, {
     collection: 'product'

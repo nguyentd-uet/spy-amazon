@@ -2,17 +2,14 @@ const puppeteer = require('puppeteer');
 const url = require('url');
 const Product = require('../models/product');
 
-const link = 'https://www.amazon.com/s/ref=amb_link_483004722_1?ie=UTF8&hidden-keywords=ORCA&field-keywords=school&bbn=12035955011&field-enc-merchantbin=ATVPDKIKX0DER&rh=i%3Afashion-novelty&page='
-const num_page_to_crawl = 20;
-
-async function crawlData() {
+async function crawlData(link, num_page_to_crawl) {
     // mở trình duyệt
     const browser = await puppeteer.launch({ headless: false });
     // Mở 1 page mới
     const page = await browser.newPage();
     let link_products = [];
     for(let i = 1; i <= num_page_to_crawl; i++) {
-        await page.goto(link + i, {timeout: 0});
+        await page.goto(`${link}&page=${i}`, {timeout: 0});
         const link_products_in_page = await page.evaluate(() => {
             // scroll page
             window.scrollBy(0, Math.floor((Math.random() * 1000) + 1));
@@ -134,7 +131,7 @@ function addToDatabase(product) {
                 data.newest_rank = product.newest_rank;
                 
                 data.rank_history.push({
-                    [last_crawl_time]: product.newest_rank
+                    [product.last_crawl_time]: product.newest_rank
                 });
                 if (data.keywords.indexOf(product.keyword) === -1) {
                     data.keywords.push(product.keyword);

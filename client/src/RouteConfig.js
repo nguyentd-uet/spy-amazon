@@ -1,5 +1,7 @@
 import React from 'react';
 import Dashboard from './pages/main/dashboard/Dashboard'
+import Products from './pages/main/products/Products'
+import Setting from './pages/main/setting/Setting'
 
 const routes = [
     // menu level 2
@@ -26,16 +28,18 @@ const routes = [
       component: (props) => <Dashboard {...props} />
     },
     {
-      path: "/prices",
-      title: 'Prices',
-      icon: 'fas fa-dollar-sign',
-      component: (props) => <PriceView {...props} />
-    }
+      path: "/products",
+      title: 'Products',
+      icon: 'fas fa-cubes',
+      component: (props) => <Products {...props} />
+    },
+    {
+        path: "/setting",
+        title: 'Setting',
+        icon: 'fas fa-cog',
+        component: (props) => <Setting {...props} />
+      }
 ];
-  
-const PriceView = () => {
-    return <h1>price view</h1>
-}
 
 function flatRouteConfig(routes) {
     let flatRoutes = []

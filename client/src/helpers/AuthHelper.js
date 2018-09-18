@@ -15,4 +15,8 @@ function logout() {
     store.clearAll()
 }
 
-export { getUserInfo, setUserInfo, logout }
+function getToken() {
+    return 'JWT ' + store.get('jwt_token');
+}
+
+export { getUserInfo, setUserInfo, logout, getToken }

@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { getToken } from '../helpers/AuthHelper'
 
 const BASE_URL = 'http://localhost:3001/api/'
 
-function get(route, access_token) {
+function get(route, access_token = getToken()) {
     let headers = {
         'authorization': access_token
     };
@@ -11,16 +12,16 @@ function get(route, access_token) {
         .then(handleResponse);
 };
 
-function post(route, payload, access_token) {
+function post(route, payload, access_token = getToken()) {
     let headers = {
         'authorization': access_token
     };
-
+console.log(access_token)
     return axios.post(BASE_URL + route, payload, {headers})
         .then(handleResponse);
 };
 
-function put(route, payload, access_token) {
+function put(route, payload, access_token = getToken()) {
     let headers = {
         'authorization': access_token
     };
@@ -29,7 +30,7 @@ function put(route, payload, access_token) {
         .then(handleResponse);
 };
 
-function deleteRequest(route, access_token) {
+function deleteRequest(route, access_token = getToken()) {
     let headers = {
         'authorization': access_token
     };

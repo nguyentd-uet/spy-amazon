@@ -69,7 +69,7 @@ class App extends Component {
           <SideBar userInfo={userInfo} />
 
           <div className="content-wrapper" style={{minHeight: window.innerHeight - 51}}>
-            <section className="content-header">
+            {/* <section className="content-header"> */}
               <Switch>
                 {
                   flatConfig.map((item, index) => {
@@ -85,7 +85,7 @@ class App extends Component {
 
                 <Redirect to='/dashboard' />
               </Switch>
-            </section>
+            {/* </section> */}
           </div>
         </div>
       );
