@@ -48,7 +48,7 @@ export default class ProductModal extends Component {
         if(mm < 10){
             mm = '0' + mm;
         } 
-        return dd + '/' + mm + '/' + yy;
+        return mm + '/' + dd + '/' + yy;
     }
 
     componentWillReceiveProps(nextProps) {
@@ -92,6 +92,7 @@ export default class ProductModal extends Component {
                         </div>
                         <div className="col-lg-8">
                             <Line data={productRanks} />
+                            <p className='text-center'>Date format mm/dd/yy</p>
                         </div>
                     </div>
                     <div className="p-2">

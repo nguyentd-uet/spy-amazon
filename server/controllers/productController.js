@@ -13,14 +13,18 @@ exports.getAllProducts = function (req, res) {
             findBy.newest_rank = {$gt: 0}
         } else if(sort === 'newest') {
             sortBy = {first_time_on_amazon: -1}
-        } 
-
-        const {startDate, endDate} = req.query
-        if(startDate) {
-            findBy.first_time_on_amazon.$gte = startDate
+        } else if(sort === 'trend') {
+            sortBy = {newest_rank: 1}
+            findBy.newest_rank = {$gt: 0}
         }
-        if(endDate) {
-            findBy.first_time_on_amazon.$lte = endDate
+
+        const {start, end} = req.query
+        if(start && end) {
+            findBy.first_time_on_amazon = {$gte: start, $lte: end}
+        } else if(start && !end) {
+            findBy.first_time_on_amazon = {$gte: start}
+        } else if(!start && end) {
+            findBy.first_time_on_amazon = {$lte: end}
         }
         Product.find(findBy)
         .sort(sortBy)
@@ -30,7 +34,7 @@ exports.getAllProducts = function (req, res) {
             if(err) {
                 res.json({
                     success: false,
-                    message: error.message
+                    message: err.message
                 })
             }
             Product.countDocuments().exec(function(err, count) {

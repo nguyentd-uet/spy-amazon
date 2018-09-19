@@ -1,7 +1,7 @@
 import { get, post, put, deleteRequest } from './ApiSender'
 
-function getAllProducts(page, sortBy) {
-    return get(`product/all/${page}/${sortBy}`)
+function getAllProducts(page, sortBy, startDate = '', endDate = '') {
+    return get(`product/all/${page}/${sortBy}?start=${startDate}&end=${endDate}`)
 }
 
 function getProductById(id) {

@@ -17,6 +17,7 @@ var ProductSchema = new mongoose.Schema({
     bullet2: String,
     thumbnail: String,
     keywords: [],
+    pct_change: String,
     created_time: {
         type: Date,
         default: new Date()

@@ -155,6 +155,12 @@ function addToDatabase(product) {
                         [product.last_crawl_time]: product.newest_rank
                     });
                 }
+
+                // ty le tang hoac giam rank
+                const lastRankObj = data.rank_history[data.rank_history.length - 2]
+                const lastRank = Object.values(lastRankObj)[0]
+                const pct_change = (product.newest_rank - lastRank)*100/lastRank
+                data.pct_change = parseFloat(pct_change).toFixed(1)
                 
                 if (data.keywords.indexOf(product.keyword) === -1) {
                     data.keywords.push(product.keyword);
