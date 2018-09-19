@@ -4,98 +4,124 @@ var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 
 // register
-exports.register = function (req, res) {
-    // get user
-    let user = new User(req.body);
-    user.hash_password = bcrypt.hashSync(req.body.password, 10);
-    const currentDate = new Date()
-    user.created_date = currentDate
-    user.updated_date = currentDate
-
-    // save
-    user.save(function (err, newUser) {
-        if (err) {
+exports.register = async function (req, res) {
+    try {
+        // find
+        const findUser = User.findOne({email: req.body.email})
+        if(findUser) {
             res.json({
                 success: false,
-                message: err.message
-            });
+                message: 'User already exist'
+            })
         }
-        newUser.hash_password = undefined
-        res.json({
-            success: true,
-            message: 'Successfully registered',
-            data: newUser
+
+        // get user
+        let user = new User(req.body);
+        user.hash_password = bcrypt.hashSync(req.body.password, 10);
+        const currentDate = new Date()
+        user.created_date = currentDate
+        user.updated_date = currentDate
+
+        // save
+        user.save(function (err, newUser) {
+            if (err) {
+                res.json({
+                    success: false,
+                    message: err.message
+                });
+            }
+            newUser.hash_password = undefined
+            res.json({
+                success: true,
+                message: 'Successfully registered',
+                data: newUser
+            });
         });
-    });
+    } catch(error) {
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
 };
 
 // login
 exports.login = function (req, res) {
+    try {
+        const {email,password} = req.body;
 
-    const {
-        email,
-        password
-    } = req.body;
-
-    // find
-    User.findOne({
-        email: email
-    }, function (err, user) {
-        if (!user) {
-            res.json({
-                success: false,
-                message: 'User is not exist'
-            })
-        } else if (user && user.comparePassword(password)) {
-            const payload = {
-                email: user.email
-            };
-            const jwtToken = jwt.sign(payload, config.jwtSecret, {
-                expiresIn: '1d'
-            });
-            console.log('jwtToken: ' + jwtToken);
-            const jsonResponse = {
-                access_token: jwtToken,
-                username: user.username,
-                email: user.email
+        // find
+        User.findOne({
+            email: email
+        }, function (err, user) {
+            if (!user) {
+                res.json({
+                    success: false,
+                    message: 'User is not exist'
+                })
+            } else if (user && user.comparePassword(password)) {
+                const payload = {
+                    email: user.email
+                };
+                const jwtToken = jwt.sign(payload, config.jwtSecret, {
+                    expiresIn: '1d'
+                });
+                console.log('jwtToken: ' + jwtToken);
+                const jsonResponse = {
+                    access_token: jwtToken,
+                    username: user.username,
+                    email: user.email
+                }
+                res.json({
+                    success: true,
+                    message: 'Successfully log in',
+                    data: jsonResponse
+                })
+            } else {
+                res.json({
+                    success: false,
+                    message: 'Email or password incorrect'
+                })
             }
-            res.json({
-                success: true,
-                message: 'Successfully log in',
-                data: jsonResponse
-            })
-        } else {
-            res.json({
-                success: false,
-                message: 'Email or password incorrect'
-            })
-        }
-    })
+        })
+    } catch(error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
 };
 
 // get list users
 exports.getListUsers = function (req, res) {
-    // find
-    User.find({}, function (err, users) {
-        if (err) {
-            res.json({
-                success: false,
-                message: err.message
-            })
-        }
-        if (users) {
-            users.forEach(function (item) {
-                item.hash_password = undefined
-            })
-            const jsonResponse = {
-                users: users
+    try {
+        // find
+        User.find({}, function (err, users) {
+            if (err) {
+                res.json({
+                    success: false,
+                    message: err.message
+                })
             }
-            res.json({
-                success: true,
-                data: jsonResponse
-            })
-        }
-    })
+            if (users) {
+                users.forEach(function (item) {
+                    item.hash_password = undefined
+                })
+                const jsonResponse = {
+                    users: users
+                }
+                res.json({
+                    success: true,
+                    data: jsonResponse
+                })
+            }
+        })
+    } catch(error) {
+        res.json({
+            success: false,
+            message: error.message
+        })
+    }
 };
 
 // check token

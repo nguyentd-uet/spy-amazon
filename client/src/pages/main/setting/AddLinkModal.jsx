@@ -16,9 +16,12 @@ export default class AddLinkModal extends Component {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
 
-        this.setState({
-            [name]: value
-        });
+        if(name === 'crawl_link') {
+            const fieldKeywords = new URLSearchParams(value).get('field-keywords')
+            this.setState({keyword: fieldKeywords.replace('%20', ' ')});
+        }
+
+        this.setState({[name]: value});
     }
 
     onClickAddBtn() {
@@ -42,12 +45,12 @@ export default class AddLinkModal extends Component {
 
         return (
             <Modal isOpen={isOpen} toggle={this.props.toggle} size='lg'>
-                <ModalHeader toggle={this.props.toggle}>Modal title</ModalHeader>
+                <ModalHeader toggle={this.props.toggle}>Add link crawl</ModalHeader>
                 <ModalBody>
                     <div className="form-group row">
-                        <label class="col-sm-2 col-form-label">Link crawl</label>
+                        <label className="col-sm-2 col-form-label">Link crawl</label>
                         <div className="col-sm-10">
-                            <input type="text" 
+                            <textarea rows={3} 
                                 className="form-control" 
                                 placeholder="Link crawl"
                                 name='crawl_link'
@@ -60,7 +63,7 @@ export default class AddLinkModal extends Component {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label class="col-sm-2 col-form-label">Keyword</label>
+                        <label className="col-sm-2 col-form-label">Keyword</label>
                         <div className="col-sm-10">
                             <input type="text" 
                                 className="form-control" 
@@ -72,25 +75,25 @@ export default class AddLinkModal extends Component {
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label class="col-sm-2 col-form-label">Type</label>
+                        <label className="col-sm-2 col-form-label">Type</label>
                         <div className="col-sm-10">
-                            <select class="custom-select" name='type' value={type} onChange={this.onChangeInput.bind(this)}>
+                            <select className="custom-select" name='type' value={type} onChange={this.onChangeInput.bind(this)}>
                                 <option value="top">Top</option>
                                 <option value="newest">Newest</option>
                             </select>
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label class="col-sm-2 col-form-label">Status</label>
+                        <label className="col-sm-2 col-form-label">Status</label>
                         <div className="col-sm-10">
-                            <select class="custom-select" name='status' value={status} onChange={this.onChangeInput.bind(this)}>
+                            <select className="custom-select" name='status' value={status} onChange={this.onChangeInput.bind(this)}>
                                 <option value={true}>Enable</option>
                                 <option value={false}>Disable</option>
                             </select>
                         </div>
                     </div>
                     <div className="form-group row">
-                        <label class="col-sm-2 col-form-label">Number pages to crawl</label>
+                        <label className="col-sm-2 col-form-label">Number pages to crawl</label>
                         <div className="col-sm-10">
                             <input type="number" 
                                 className="form-control" 

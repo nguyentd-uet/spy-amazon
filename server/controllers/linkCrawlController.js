@@ -7,7 +7,7 @@ exports.getAllLink = function (req, res) {
             if(err) {
                 res.json({
                     success: false,
-                    message: error.message
+                    message: err.message
                 })
             }
             res.json({
@@ -31,7 +31,7 @@ exports.getLinkById = function (req, res) {
             if(err) {
                 res.json({
                     success: false,
-                    message: error.message
+                    message: err.message
                 })
             }
             res.json({
@@ -51,6 +51,7 @@ exports.getLinkById = function (req, res) {
 exports.postLink = function (req, res) {
     try {
         const link = new LinkCrawl(req.body)
+        link.user_id = req.user._id
         link.save(function (err, newLink) {
             if (err) {
                 res.json({
@@ -84,7 +85,7 @@ exports.putLink = function (req, res) {
             }
             res.json({
                 success: true,
-                message: 'Upload link success',
+                message: 'Update link success',
                 data: linkUpdated
             })
         })

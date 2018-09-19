@@ -8,6 +8,7 @@ var LinkCrawlSchema = new mongoose.Schema({
     keyword: String,
     type: {
         type: String,
+        default: 'top',
         enum: ['top', 'newest']
     },
     status: {
@@ -26,8 +27,5 @@ var LinkCrawlSchema = new mongoose.Schema({
 }, {
     collection: 'linkCrawl'
 });
-
-// const link = 'https://www.amazon.com/s/ref=amb_link_483004722_1?ie=UTF8&hidden-keywords=ORCA&field-keywords=school&bbn=12035955011&field-enc-merchantbin=ATVPDKIKX0DER&rh=i%3Afashion-novelty'
-
 
 module.exports = mongoose.model('LinkCrawl', LinkCrawlSchema);

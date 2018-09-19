@@ -6,6 +6,7 @@ var ProductSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
+    brand: String,
     title: String,
     price: String,
     product_link: String,

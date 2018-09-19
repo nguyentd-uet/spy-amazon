@@ -8,6 +8,7 @@ var db = require('./services/dbConnect');
 var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
 var linkCrawlRouter = require('./routes/linkCrawl')
+var productRouter = require('./routes/product')
 const { crawlJob } = require('./services/cronJob')
 
 crawlJob();
@@ -32,6 +33,7 @@ app.use(cookieParser());
 app.use('/api', indexRouter);
 app.use('/api/user', userRouter);
 app.use('/api/link', linkCrawlRouter);
+app.use('/api/product', productRouter);
 
 // any routes not picked up by the server api will be handled by the react router
 app.use('/*', staticFiles)

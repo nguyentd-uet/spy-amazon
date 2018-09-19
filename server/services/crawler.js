@@ -35,7 +35,7 @@ async function crawlData(link, num_page_to_crawl) {
         }
     }
     
-    // console.log(link_products);
+    // lay keyword tu link
     const keyword = url.parse(link, true).query['field-keywords'] || '';
     
     // chứa danh sách những promise
@@ -59,6 +59,7 @@ async function getProductInfo(product_link, page, keyword, thumbnail) {
     let product = await page.evaluate(() => {
         // scroll page
         window.scrollBy(0, Math.floor((Math.random() * 1000) + 1));
+        const brand = document.querySelector('#bylineInfo').innerText;
         const title = document.querySelector('#productTitle').innerText;
         const asin = document.querySelector('#ASIN').value;
         const price = document.querySelector('#priceblock_ourprice').innerText;
@@ -93,6 +94,7 @@ async function getProductInfo(product_link, page, keyword, thumbnail) {
         const currentTime = new Date().getTime();
         const data = {
             asin: asin,
+            brand: brand,
             title: title,
             price: price,
             newest_rank: rankNumber,
@@ -116,6 +118,12 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function isSameDay(d1, d2) {
+    return d1.getFullYear() === d2.getFullYear() &&
+        d1.getMonth() === d2.getMonth() &&
+        d1.getDate() === d2.getDate();
+}
+
 function addToDatabase(product) {
     try {
         console.log(product);
@@ -127,12 +135,27 @@ function addToDatabase(product) {
             }
             if (data) {
                 data.price = product.price;
+                data.brand = product.brand;
                 data.title = product.title;
                 data.newest_rank = product.newest_rank;
                 
-                data.rank_history.push({
-                    [product.last_crawl_time]: product.newest_rank
-                });
+                // so sanh ngay cuoi cung update rank history voi lan crawl nay
+                // neu cung ngay, cap nhat vao phan tu cuoi cua array
+                // neu ko cung ngay, push vao cuoi array
+                const parseDate_lastCrawlTime = new Date(product.last_crawl_time);
+                const lastElement_rankHistory = data.rank_history[data.rank_history.length - 1];
+                const keyOfLastElement = Object.keys(lastElement_rankHistory)[0];
+                const lastDayCrawl_rankHistory = new Date(keyOfLastElement);
+                if (isSameDay(parseDate_lastCrawlTime, lastDayCrawl_rankHistory)) {
+                    data.rank_history[data.rank_history.length - 1] = {
+                        [product.last_crawl_time]: product.newest_rank
+                    }
+                } else {
+                    data.rank_history.push({
+                        [product.last_crawl_time]: product.newest_rank
+                    });
+                }
+                
                 if (data.keywords.indexOf(product.keyword) === -1) {
                     data.keywords.push(product.keyword);
                 }
