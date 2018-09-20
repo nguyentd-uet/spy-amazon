@@ -3,7 +3,7 @@ var config = require('../config');
 
 exports.connectMongoDb = function() {
     //connect to MongoDB
-    var mongodbUri = config.dbUriLocal
+    var mongodbUri = config.dbMlab
     const configs = {
         useNewUrlParser: true,
     };

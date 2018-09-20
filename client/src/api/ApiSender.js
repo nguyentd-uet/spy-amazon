@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getToken } from '../helpers/AuthHelper'
 
-const BASE_URL = 'http://localhost:3001/api/'
+const BASE_URL = 'https://young-wildwood-22986.herokuapp.com/api/'
 
 function get(route, access_token = getToken()) {
     let headers = {
