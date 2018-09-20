@@ -37,19 +37,19 @@ exports.getAllProducts = function (req, res) {
         .limit(perPage)
         .exec(function(err, products) {
             if(err) {
-                res.json({
+                return res.json({
                     success: false,
                     message: err.message
                 })
             }
             Product.countDocuments(findBy).exec(function(err, count) {
                 if (err) {
-                    res.json({
+                    return res.json({
                         success: false,
                         message: err.message
                     })
                 }
-                res.json({
+                return res.json({
                     success: true,
                     data: products,
                     page: page,
@@ -59,7 +59,7 @@ exports.getAllProducts = function (req, res) {
             })
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })
@@ -72,18 +72,18 @@ exports.getProductById = function (req, res) {
         const { id } = req.params
         Product.findOne({ _id: id }, function(err, product) {
             if(err) {
-                res.json({
+                return res.json({
                     success: false,
                     message: err.message
                 })
             }
-            res.json({
+            return res.json({
                 success: true,
                 data: product
             })
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })
@@ -96,19 +96,19 @@ exports.postProduct = function (req, res) {
         const product = new Product(req.body)
         product.save(function (err, newProduct) {
             if (err) {
-                res.json({
+                return res.json({
                     success: false,
                     message: err.message
                 });
             }
-            res.json({
+            return res.json({
                 success: true,
                 message: 'Create product success',
                 data: newProduct
             });
         });
     } catch (error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })
@@ -120,19 +120,19 @@ exports.putProduct = function (req, res) {
     try {
         Product.findOneAndUpdate({_id: req.params.id}, req.body, function(err, productUpdated) {
             if(err) {
-                res.json({
+                return res.json({
                     success: false,
                     message: err.message
                 })
             }
-            res.json({
+            return res.json({
                 success: true,
                 message: 'Update product success',
                 data: productUpdated
             })
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })
@@ -144,18 +144,18 @@ exports.deleteProduct = function (req, res) {
     try {
         Product.findOneAndRemove({_id: req.params.id}, function(err) {
             if(err) {
-                res.json({
+                return res.json({
                     success: false,
                     message: err.message
                 })
             }
-            res.json({
+            return res.json({
                 success: true,
                 message: 'Delete product success'
             })
         })
     } catch (error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })

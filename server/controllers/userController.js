@@ -7,9 +7,9 @@ var bcrypt = require('bcrypt');
 exports.register = async function (req, res) {
     try {
         // find
-        const findUser = User.findOne({email: req.body.email})
+        const findUser = await User.findOne({email: req.body.email})
         if(findUser) {
-            res.json({
+            return res.json({
                 success: false,
                 message: 'User already exist'
             })
@@ -25,20 +25,19 @@ exports.register = async function (req, res) {
         // save
         user.save(function (err, newUser) {
             if (err) {
-                res.json({
-                    success: false,
-                    message: err.message
+                throw err;
+            }
+            if (newUser) {
+                newUser.hash_password = undefined
+                return res.json({
+                    success: true,
+                    message: 'Successfully registered',
+                    data: newUser
                 });
             }
-            newUser.hash_password = undefined
-            res.json({
-                success: true,
-                message: 'Successfully registered',
-                data: newUser
-            });
         });
     } catch(error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         });
@@ -55,7 +54,7 @@ exports.login = function (req, res) {
             email: email
         }, function (err, user) {
             if (!user) {
-                res.json({
+                return res.json({
                     success: false,
                     message: 'User is not exist'
                 })
@@ -72,20 +71,20 @@ exports.login = function (req, res) {
                     username: user.username,
                     email: user.email
                 }
-                res.json({
+                return res.json({
                     success: true,
                     message: 'Successfully log in',
                     data: jsonResponse
                 })
             } else {
-                res.json({
+                return res.json({
                     success: false,
                     message: 'Email or password incorrect'
                 })
             }
         })
     } catch(error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })
@@ -98,7 +97,7 @@ exports.getListUsers = function (req, res) {
         // find
         User.find({}, function (err, users) {
             if (err) {
-                res.json({
+                return res.json({
                     success: false,
                     message: err.message
                 })
@@ -110,14 +109,14 @@ exports.getListUsers = function (req, res) {
                 const jsonResponse = {
                     users: users
                 }
-                res.json({
+                return res.json({
                     success: true,
                     data: jsonResponse
                 })
             }
         })
     } catch(error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })
@@ -130,19 +129,19 @@ exports.checkToken = function (req, res) {
         var jwtToken = req.body.token;
         jwt.verify(jwtToken, config.jwtSecret, function (err, payload) {
             if (err) {
-                res.json({
+                return res.json({
                     success: false,
                     message: 'Token invalid'
                 });
             } else {
-                res.json({
+                return res.json({
                     success: true,
                     message: 'Token valid'
                 })
             }
         });
     } catch (error) {
-        res.json({
+        return res.json({
             success: false,
             message: error.message
         })
