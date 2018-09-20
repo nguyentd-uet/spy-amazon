@@ -5,7 +5,7 @@ var product_controller = require('../controllers/productController');
 var auth_controller = require('../controllers/authController');
 
 // GET list products
-router.get('/all/:page/:sort', auth_controller.isAuthenticated, product_controller.getAllProducts);
+router.get('/all/get/:page/:sort', auth_controller.isAuthenticated, product_controller.getAllProducts);
 
 // GET product by id
 router.get('/:id', auth_controller.isAuthenticated, product_controller.getProductById);

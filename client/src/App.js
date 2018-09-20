@@ -12,12 +12,12 @@ import store from 'store'
 
 const LoginLoadable = Loadable({
   loader: () => import('./pages/login/Login'),
-  loading: Loading,
+  loading: () => <Loading size='50' />,
 });
 
 const RegisterLoadable = Loadable({
   loader: () => import('./pages/register/Register'),
-  loading: Loading,
+  loading: () => <Loading size='50' />,
 });
 
 class App extends Component {

@@ -1,17 +1,14 @@
 import React, { Component } from 'react'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { postLink } from '../../../api/LinkCrawlApi'
+import { putLink } from '../../../api/LinkCrawlApi'
 
-export default class AddLinkModal extends Component {
+export default class EditLinkModal extends Component {
     state = {
-        crawl_link: '',
-        keyword: '',
-        type: 'top', //enum: ['top', 'newest']
-        status: true,
-        num_page_to_crawl: 20
+        link: {}
     }
 
     onChangeInput(event) {
+        let link = this.state.link
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const name = target.name;
@@ -20,17 +17,18 @@ export default class AddLinkModal extends Component {
             const fieldKeywords = new URLSearchParams(value).get('field-keywords')
             const keyword = fieldKeywords.replace('%20', ' ')
             if (keyword) {
-                this.setState({keyword});
+                link.keyword = keyword
             }
         }
+        link[name] = value
 
-        this.setState({[name]: value});
+        this.setState({link});
     }
 
-    onClickAddBtn() {
-        const { crawl_link } = this.state
-        if (crawl_link !== '') {
-            postLink({...this.state})
+    onClickEditBtn() {
+        const { link } = this.state
+        if (link.crawl_link !== '') {
+            putLink(link._id, {...link})
             .then(res => {
                 alert(res.message)
                 console.log(res.data)
@@ -42,9 +40,15 @@ export default class AddLinkModal extends Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps && nextProps.link !== this.state.link) {
+            this.setState({link: nextProps.link})
+        }
+    }
+
     render() {
         const { isOpen } = this.props
-        const { crawl_link, keyword, type, status, num_page_to_crawl } = this.state
+        const { link } = this.state
 
         return (
             <Modal isOpen={isOpen} toggle={this.props.toggle} size='lg'>
@@ -57,7 +61,7 @@ export default class AddLinkModal extends Component {
                                 className="form-control" 
                                 placeholder="Link crawl"
                                 name='crawl_link'
-                                value={crawl_link}
+                                value={link.crawl_link}
                                 onChange={this.onChangeInput.bind(this)}
                             />
                             <small className="form-text text-muted">
@@ -72,7 +76,7 @@ export default class AddLinkModal extends Component {
                                 className="form-control" 
                                 placeholder="Keyword"
                                 name='keyword'
-                                value={keyword}
+                                value={link.keyword}
                                 onChange={this.onChangeInput.bind(this)}
                             />
                         </div>
@@ -80,7 +84,7 @@ export default class AddLinkModal extends Component {
                     <div className="form-group row">
                         <label className="col-sm-2 col-form-label">Type</label>
                         <div className="col-sm-10">
-                            <select className="custom-select" name='type' value={type} onChange={this.onChangeInput.bind(this)}>
+                            <select className="custom-select" name='type' value={link.type} onChange={this.onChangeInput.bind(this)}>
                                 <option value="top">Top</option>
                                 <option value="newest">Newest</option>
                             </select>
@@ -89,7 +93,7 @@ export default class AddLinkModal extends Component {
                     <div className="form-group row">
                         <label className="col-sm-2 col-form-label">Status</label>
                         <div className="col-sm-10">
-                            <select className="custom-select" name='status' value={status} onChange={this.onChangeInput.bind(this)}>
+                            <select className="custom-select" name='status' value={link.status} onChange={this.onChangeInput.bind(this)}>
                                 <option value={true}>Enable</option>
                                 <option value={false}>Disable</option>
                             </select>
@@ -102,14 +106,14 @@ export default class AddLinkModal extends Component {
                                 className="form-control" 
                                 placeholder="Number pages to crawl"
                                 name='num_page_to_crawl'
-                                value={num_page_to_crawl}
+                                value={link.num_page_to_crawl}
                                 onChange={this.onChangeInput.bind(this)}
                             />
                         </div>
                     </div>
                 </ModalBody>
                 <ModalFooter>
-                    <Button color="primary" onClick={this.onClickAddBtn.bind(this)}>Add link</Button>{' '}
+                    <Button color="primary" onClick={this.onClickEditBtn.bind(this)}>Edit link</Button>{' '}
                     <Button color="secondary" onClick={this.props.toggle}>Cancel</Button>
                 </ModalFooter>
             </Modal>

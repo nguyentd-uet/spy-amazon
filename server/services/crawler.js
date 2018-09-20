@@ -118,6 +118,7 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// kiem tra 2 thoi diem co cung 1 ngay ko
 function isSameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
         d1.getMonth() === d2.getMonth() &&
@@ -133,6 +134,8 @@ function addToDatabase(product) {
                 console.log(err);
                 return;
             }
+
+            // neu da ton tai product, cap nhat product 
             if (data) {
                 data.price = product.price;
                 data.brand = product.brand;
@@ -172,6 +175,7 @@ function addToDatabase(product) {
                     return;
                 });
             } else {
+                // tao moi product
                 product.rank_history = [{
                     [product.last_crawl_time]: product.newest_rank
                 }];

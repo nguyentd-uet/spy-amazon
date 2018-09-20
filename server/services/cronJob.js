@@ -4,10 +4,10 @@ const LinkCrawl = require('../models/link_crawl');
 
 function crawlJob() {
     var job = new CronJob({
-        cronTime: '00 58 09 * * *',
+        cronTime: '00 00 16 * * *',
         onTick: function() {
           /*
-           * Runs every day at 11:30:00 AM.
+           * Runs every day at 16:00:00.
            */
             LinkCrawl.find({status: true},async function(err, links) {
                 if(links && links.length > 0) {

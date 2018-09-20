@@ -5,7 +5,7 @@ var link_crawl_controller = require('../controllers/linkCrawlController');
 var auth_controller = require('../controllers/authController');
 
 // GET list links
-router.get('/all', auth_controller.isAuthenticated, link_crawl_controller.getAllLink);
+router.get('/all/get', auth_controller.isAuthenticated, link_crawl_controller.getAllLink);
 
 // GET link by id
 router.get('/:id', auth_controller.isAuthenticated, link_crawl_controller.getLinkById);

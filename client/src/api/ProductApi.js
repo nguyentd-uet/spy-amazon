@@ -1,7 +1,13 @@
 import { get, post, put, deleteRequest } from './ApiSender'
 
-function getAllProducts(page, sortBy, startDate = '', endDate = '') {
-    return get(`product/all/${page}/${sortBy}?start=${startDate}&end=${endDate}`)
+function getAllProducts(page, sortBy, startDate = '', endDate = '', keywords= []) {
+    let keywordQuery = ''
+    if(Array.isArray(keywords) && keywords.length > 0) {
+        keywords.map(item => {
+            return keywordQuery += `&keywords[]=${item}`
+        })
+    }
+    return get(`product/all/get/${page}/${sortBy}?start=${startDate}&end=${endDate}${keywordQuery}`)
 }
 
 function getProductById(id) {

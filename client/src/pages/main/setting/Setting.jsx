@@ -1,18 +1,39 @@
 import React, { Component } from 'react'
 import AddLinkModal from './AddLinkModal'
-import { getAllLink } from '../../../api/LinkCrawlApi'
+import EditLinkModal from './EditLinkModal'
+import { getAllLink, deleteLink } from '../../../api/LinkCrawlApi'
 
 export default class Setting extends Component {
     state = {
-        isShownModal: false,
-        links: []
+        isShownAddLinkModal: false,
+        isShownEditLinkModal: false,
+        links: [],
+        linkSelected: {}
     }
 
-    toggleModal() {
-        this.setState({isShownModal: !this.state.isShownModal});
+    toggleAddLinkModal() {
+        this.setState({isShownAddLinkModal: !this.state.isShownAddLinkModal});
     }
 
-    componentDidMount() {
+    toggleEditLinkModal() {
+        this.setState({isShownEditLinkModal: !this.state.isShownEditLinkModal});
+    }
+
+    onCloseEditModal(shouldUpdate) {
+        if(shouldUpdate) {
+            this.getListLink()
+        }
+        this.setState({isShownEditLinkModal: false})
+    }
+
+    onCloseAddModal(shouldUpdate) {
+        if(shouldUpdate) {
+            this.getListLink()
+        }
+        this.setState({isShownAddLinkModal: false})
+    }
+
+    getListLink() {
         getAllLink()
         .then(res => {
             if(res.success) {
@@ -20,9 +41,29 @@ export default class Setting extends Component {
             }
         })
     }
+
+    onOpenEditLinkModal(linkSelected) {
+        this.setState({isShownEditLinkModal: true, linkSelected})
+    }
+
+    componentDidMount() {
+        this.getListLink()
+    }
+
+    onDeleteLink(id, index) {
+        let links = this.state.links
+        deleteLink(id)
+        .then(res => {
+            if(res.success) {
+                links.splice(index, 1)
+                this.setState({links})
+            }
+        })
+        .catch(err => alert(err))
+    }
     
     render() {
-      const { isShownModal, links } = this.state
+      const { isShownAddLinkModal, isShownEditLinkModal, links, linkSelected } = this.state
         return (
             <div>
                 <section className="content-header mt-0">
@@ -38,9 +79,18 @@ export default class Setting extends Component {
                             <div className="box">
                                 <div className="box-header with-border">
                                     {/* <h3 className="box-title">Monthly Recap Report</h3> */}
-                                    <button className='btn btn-primary' onClick={this.toggleModal.bind(this)}>Add link crawl</button>
+                                    <button className='btn btn-primary' onClick={this.toggleAddLinkModal.bind(this)}>Add link crawl</button>
 
-                                    <AddLinkModal isOpen={isShownModal} toggle={this.toggleModal.bind(this)} />
+                                    <AddLinkModal 
+                                        isOpen={isShownAddLinkModal} 
+                                        toggle={this.toggleAddLinkModal.bind(this)} 
+                                        onClose={this.onCloseAddModal.bind(this)}
+                                    />
+                                    <EditLinkModal isOpen={isShownEditLinkModal} 
+                                        toggle={this.toggleEditLinkModal.bind(this)} 
+                                        link={linkSelected} 
+                                        onClose={this.onCloseEditModal.bind(this)}
+                                    />
                                 </div>
                                 <div className="box-body">
                                     <div className="row">
@@ -63,21 +113,33 @@ export default class Setting extends Component {
                                                             return (
                                                                 <tr key={item._id}>
                                                                     <th scope="row">{index+1}</th>
-                                                                    <td>{item.crawl_link}</td>
+                                                                    <td>
+                                                                        <span className='text-primary' 
+                                                                            style={{cursor: 'pointer'}} 
+                                                                            onClick={this.onOpenEditLinkModal.bind(this, item)}
+                                                                        >
+                                                                            {item.crawl_link}
+                                                                        </span>
+                                                                    </td>
                                                                     <td>{item.keyword}</td>
                                                                     <td>{item.type}</td>
                                                                     <td>
                                                                     {
                                                                         item.status ? 
                                                                         <span className="badge badge-success" style={{padding: '5px'}}>Enable</span>
-                                                                        :<span class="badge badge-danger" style={{padding: '5px'}}>Disable</span>
+                                                                        :<span className="badge badge-danger" style={{padding: '5px'}}>Disable</span>
                                                                     }
                                                                     </td>
                                                                     <td>{item.num_page_to_crawl}</td>
                                                                     <td className='text-center'>
-                                                                        <i className='fas fa-pen text-info mx-2' style={{cursor: 'pointer'}}></i>
-                                                                        <i className='fas fa-trash-alt text-danger' style={{cursor: 'pointer'}}></i>
-                                                                        
+                                                                        <i className='fas fa-pen text-info mx-2' 
+                                                                            style={{cursor: 'pointer'}}
+                                                                            onClick={this.onOpenEditLinkModal.bind(this)}>
+                                                                        </i>
+                                                                        <i className='fas fa-trash-alt text-danger' 
+                                                                            style={{cursor: 'pointer'}} 
+                                                                            onClick={this.onDeleteLink.bind(this, item._id, item.index)}>
+                                                                        </i>
                                                                     </td>
                                                                 </tr>
                                                             )

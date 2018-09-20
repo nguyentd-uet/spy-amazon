@@ -1,7 +1,7 @@
 import { get, post, put, deleteRequest } from './ApiSender'
 
 function getAllLink() {
-    return get('link/all')
+    return get(`link/all/get`)
 }
 
 function getLinkById(id) {
@@ -13,6 +13,7 @@ function postLink(payload) {
 }
 
 function putLink(id, payload) {
+    console.log(payload)
     return put('link/' + id, payload)
 }
 

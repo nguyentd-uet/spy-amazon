@@ -18,13 +18,18 @@ exports.getAllProducts = function (req, res) {
             findBy.newest_rank = {$gt: 0}
         }
 
-        const {start, end} = req.query
+        const {start, end, keywords} = req.query
         if(start && end) {
             findBy.first_time_on_amazon = {$gte: start, $lte: end}
         } else if(start && !end) {
             findBy.first_time_on_amazon = {$gte: start}
         } else if(!start && end) {
             findBy.first_time_on_amazon = {$lte: end}
+        }
+
+        console.log(keywords)
+        if(Array.isArray(keywords) && keywords.length > 0) {
+            findBy.keywords = { $all: keywords}
         }
         Product.find(findBy)
         .sort(sortBy)
@@ -37,7 +42,7 @@ exports.getAllProducts = function (req, res) {
                     message: err.message
                 })
             }
-            Product.countDocuments().exec(function(err, count) {
+            Product.countDocuments(findBy).exec(function(err, count) {
                 if (err) {
                     res.json({
                         success: false,
