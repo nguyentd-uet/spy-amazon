@@ -1,7 +1,9 @@
 const {crawlData} = require('./services/crawler');
 const LinkCrawl = require('./models/link_crawl');
+var db = require('./services/dbConnect');
 
 async function crawlJob() {
+    db.connectMongoDb();
     console.log('start crawl')
     LinkCrawl.find({status: true},async function(err, links) {
         if(links && links.length > 0) {
