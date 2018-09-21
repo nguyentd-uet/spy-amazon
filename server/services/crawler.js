@@ -216,4 +216,4 @@ function addToDatabase(product) {
     }
 }
 
-export {crawlData}
+module.exports = {crawlData}
