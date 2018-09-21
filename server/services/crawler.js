@@ -3,115 +3,126 @@ const url = require('url');
 const Product = require('../models/product');
 
 async function crawlData(link, num_page_to_crawl) {
-    // mở trình duyệt
-    const browser = await puppeteer.launch();
-    // Mở 1 page mới
-    const page = await browser.newPage();
-    let link_products = [];
-    for(let i = 1; i <= num_page_to_crawl; i++) {
-        await page.goto(`${link}&page=${i}`, {timeout: 0});
-        const link_products_in_page = await page.evaluate(() => {
-            // scroll page
-            window.scrollBy(0, Math.floor((Math.random() * 1000) + 1));
-            const cards = document.querySelectorAll("div.a-gesture");
-            if (cards.length === 0) {
-                return [];
-            } 
-            let links = [];
-            cards.forEach(item => {
-                links.push({
-                    link: item.querySelector('a').href,
-                    thumbnail: item.querySelector('img.s-access-image').src
-                })
+    try {
+        // mở trình duyệt
+        const browser = await puppeteer.launch();
+        // Mở 1 page mới
+        const page = await browser.newPage();
+        let link_products = [];
+        for(let i = 1; i <= num_page_to_crawl; i++) {
+            await page.goto(`${link}&page=${i}`, {timeout: 0});
+            const link_products_in_page = await page.evaluate(() => {
+                // scroll page
+                window.scrollBy(0, Math.floor((Math.random() * 1000) + 1));
+                const cards = document.querySelectorAll("div.a-gesture");
+                if (cards.length === 0) {
+                    return [];
+                } 
+                let links = [];
+                cards.forEach(item => {
+                    let thumbnail = item.querySelector('img.s-access-image').src
+                    links.push({
+                        link: item.querySelector('a').href,
+                        thumbnail: thumbnail.replace('AC_UL260_SR200,260', 'AC_UL560_SR500,560')
+                    })
+                });
+            
+                return links
             });
-        
-            return links
-        });
 
-        if (link_products_in_page.length === 0) {
-            i = num_page_to_crawl;
-        } else {
-            link_products.push(...link_products_in_page)
+            if (link_products_in_page.length === 0) {
+                i = num_page_to_crawl;
+            } else {
+                link_products.push(...link_products_in_page)
+            }
         }
-    }
-    
-    // lay keyword tu link
-    const keyword = url.parse(link, true).query['field-keywords'] || '';
-    
-    // chứa danh sách những promise
-    const promises = [];
-    for (let i = 0; i < link_products.length; i++) {
-        promises.push(await getProductInfo(link_products[i].link, page, keyword, link_products[i].thumbnail))
-    }
+        
+        // lay keyword tu link
+        const keyword = url.parse(link, true).query['field-keywords'] || '';
+        
+        // chứa danh sách những promise
+        const promises = [];
+        for (let i = 0; i < link_products.length; i++) {
+            promises.push(await getProductInfo(link_products[i].link, page, keyword, link_products[i].thumbnail))
+        }
 
-    // tắt trình duyệt
-    await browser.close();
+        // tắt trình duyệt
+        await browser.close();
+    } catch (error) {
+        console.log(error)
+        return;
+    }
 } 
 
 async function getProductInfo(product_link, page, keyword, thumbnail) {
-    //delay
-    await timeout(Math.floor((Math.random() * 10000) + 1));
+    try {
+        //delay
+        await timeout(Math.floor((Math.random() * 10000) + 1));
 
-    await page.goto(product_link, {timeout: 0});
-    // Chờ 2s sau khi page được load để tránh overload
-    await page.waitFor(2000);
+        await page.goto(product_link, {timeout: 0});
+        // Chờ 2s sau khi page được load để tránh overload
+        await page.waitFor(2000);
 
-    let product = await page.evaluate(() => {
-        // scroll page
-        window.scrollBy(0, Math.floor((Math.random() * 1000) + 1));
-        const brand = document.querySelector('#bylineInfo').innerText;
-        const title = document.querySelector('#productTitle').innerText;
-        const asin = document.querySelector('#ASIN').value;
-        const price = document.querySelector('#priceblock_ourprice').innerText;
+        let product = await page.evaluate(() => {
+            // scroll page
+            window.scrollBy(0, Math.floor((Math.random() * 1000) + 1));
+            const brand = document.querySelector('#bylineInfo') ? document.querySelector('#bylineInfo').innerText : '';
+            const title = document.querySelector('#productTitle') ? document.querySelector('#productTitle').innerText : '';
+            const asin = document.querySelector('#ASIN') ? document.querySelector('#ASIN').value : '';
+            const price = document.querySelector('#priceblock_ourprice') ? document.querySelector('#priceblock_ourprice').innerText : '';
 
-        const featureBullets = document.querySelector('#feature-bullets').querySelectorAll("li");
-        let bullets = [];
-        featureBullets.length > 0 && featureBullets.forEach(item => {
-            const ignoreBullets = ['solid', 'imported', 'machine', 'lightweight,'];
-            const firstWordOfItem = item.innerText.split(' ')[0].toLowerCase();
-            if(ignoreBullets.indexOf(firstWordOfItem) === -1) {
-                bullets.push(item.innerText);
-            } 
-        })
-        const bullet1 = bullets[0] || '';
-        const bullet2 = bullets[1] || '';
+            const featureBullets = document.querySelector('#feature-bullets') ? document.querySelector('#feature-bullets').querySelectorAll("li") : [];
+            let bullets = [];
+            featureBullets.length > 0 && featureBullets.forEach(item => {
+                const ignoreBullets = ['solid', 'imported', 'machine', 'lightweight,'];
+                const firstWordOfItem = item.innerText && item.innerText.split(' ')[0].toLowerCase();
+                if(ignoreBullets.indexOf(firstWordOfItem) === -1 && item.innerText) {
+                    bullets.push(item.innerText);
+                } 
+            })
+            const bullet1 = bullets[0] || '';
+            const bullet2 = bullets[1] || '';
 
-        let first_time_on_amazon;
-        const detailBullets = document.querySelector('#detailBullets_feature_div').querySelectorAll('li');
-        detailBullets.length > 0 && detailBullets.forEach(item => {
-            if (item.innerText.indexOf('Date first listed on Amazon') !== -1) {
-                first_time_on_amazon = item.innerText.split(':')[1].trim();
+            let first_time_on_amazon;
+            const detailBullets = document.querySelector('#detailBullets_feature_div') ? document.querySelector('#detailBullets_feature_div').querySelectorAll('li') : [];
+            detailBullets.length > 0 && detailBullets.forEach(item => {
+                if (item.innerText && item.innerText.indexOf('Date first listed on Amazon') !== -1) {
+                    first_time_on_amazon = item.innerText.split(':')[1].trim();
+                }
+            })
+
+            const salesRank = document.querySelector('#SalesRank');
+            let rankNumber = -1;
+            if (salesRank) {
+                const rankText = salesRank.innerText ? salesRank.innerText.split('#')[1].split(' ')[0] : -1;
+                rankNumber = parseInt(rankText.replace(/\D/g,''));
             }
-        })
 
-        const salesRank = document.querySelector('#SalesRank');
-        let rankNumber = -1;
-        if (salesRank) {
-            const rankText = salesRank.innerText.split('#')[1].split(' ')[0];
-            rankNumber = parseInt(rankText.replace(/\D/g,''));
-        }
+            const currentTime = new Date().getTime();
+            const data = {
+                asin: asin,
+                brand: brand,
+                title: title,
+                price: price,
+                newest_rank: rankNumber,
+                bullet1: bullet1,
+                bullet2: bullet2,
+                first_time_on_amazon: first_time_on_amazon,
+                last_crawl_time: currentTime
+            }
+            return data;
+        });
 
-        const currentTime = new Date().getTime();
-        const data = {
-            asin: asin,
-            brand: brand,
-            title: title,
-            price: price,
-            newest_rank: rankNumber,
-            bullet1: bullet1,
-            bullet2: bullet2,
-            first_time_on_amazon: first_time_on_amazon,
-            last_crawl_time: currentTime
-        }
-        return data;
-    });
+        product.product_link = product_link;
+        product.thumbnail = thumbnail;
+        product.keyword = keyword;
 
-    product.product_link = product_link;
-    product.thumbnail = thumbnail;
-    product.keyword = keyword;
-
-    addToDatabase(product);
-    return page;
+        addToDatabase(product);
+        return page;
+    } catch (error) {
+        console.log(error)
+        return;
+    }
 }
 
 function timeout(ms) {
@@ -127,7 +138,7 @@ function isSameDay(d1, d2) {
 
 function addToDatabase(product) {
     try {
-        console.log(product);
+        // console.log(product);
 
         Product.findOne({asin: product.asin}, function(err, data) {
             if(err) {
