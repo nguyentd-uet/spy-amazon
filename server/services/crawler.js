@@ -68,7 +68,13 @@ async function getProductInfo(product_link, page, keyword, thumbnail) {
             window.scrollBy(0, Math.floor((Math.random() * 1000) + 1));
             const brand = document.querySelector('#bylineInfo') ? document.querySelector('#bylineInfo').innerText : '';
             const title = document.querySelector('#productTitle') ? document.querySelector('#productTitle').innerText : '';
-            const asin = document.querySelector('#ASIN') ? document.querySelector('#ASIN').value : '';
+
+            let asin = ''
+            if(document.querySelector('#ASIN')) {
+                asin =  document.querySelector('#ASIN').value;
+            } else {
+                return;
+            }
             const price = document.querySelector('#priceblock_ourprice') ? document.querySelector('#priceblock_ourprice').innerText : '';
 
             const featureBullets = document.querySelector('#feature-bullets') ? document.querySelector('#feature-bullets').querySelectorAll("li") : [];
