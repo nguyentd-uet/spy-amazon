@@ -9,9 +9,9 @@ var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
 var linkCrawlRouter = require('./routes/linkCrawl')
 var productRouter = require('./routes/product')
-const { crawlJob } = require('./services/cronJob')
+// const { crawlJob } = require('./services/cronJob')
 
-crawlJob();
+// crawlJob();
 
 var app = express();
 
