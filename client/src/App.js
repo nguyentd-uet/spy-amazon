@@ -22,7 +22,7 @@ const RegisterLoadable = Loadable({
 
 class App extends Component {
   state = {
-    isLogin: false,
+    isLogin: true,
     userInfo: {}
   }
 
@@ -47,7 +47,9 @@ class App extends Component {
       if(res.success) {
         const userInfo = store.get('user_info')
         if (userInfo) {
-          this.setState({isLogin: true, userInfo: userInfo})
+          this.setState({userInfo: userInfo})
+        } else {
+          this.setState({isLogin: false, userInfo: {}})
         }
       } else {
         this.logout()

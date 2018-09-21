@@ -40,9 +40,11 @@ export default class Products extends Component {
       endDate = ''
       let currentDate = new Date()
       startDate = currentDate.setDate(currentDate.getDate() - 5)
+      this.props.history.push(`/products?sort=${e.target.value}&start=${startDate}`)
     } else {
       startDate = ''
       endDate = ''
+      this.props.history.push(`/products?sort=${e.target.value}`)
     }
     const startDateFormat = this.parseDatetime(startDate)
     const endDateFormat = this.parseDatetime(endDate)
@@ -59,15 +61,31 @@ export default class Products extends Component {
     const endDate = this.parseDatetime(picker.endDate)
     this.setState({startDate: startDate, endDate: endDate})
     this.getListProducts(1, this.state.sortBy, startDate, endDate)
+    this.props.history.push(`/products?sort=${this.state.sortBy}&start=${startDate}&end=${endDate}`)
   }
 
   onCancelDatePicker() {
     this.setState({startDate: '', endDate: '', page: 1})
     this.getListProducts(1, this.state.sortBy, '', '')
+    this.props.history.push('/products?sort=' + this.state.sortBy)
   }
 
   componentDidMount() {
-    this.getListProducts(1)
+    const query = new URLSearchParams(this.props.location.search)
+    const sortBy = query.get('sort')
+
+    let startDate = ''
+    if (query.get('start') && !isNaN(parseInt(query.get('start'), 10))) {
+      startDate = this.parseDatetime(parseInt(query.get('start'), 10))
+    }
+
+    let endDate = ''
+    if (query.get('end') && !isNaN(parseInt(query.get('end'), 10))) {
+      endDate = this.parseDatetime(parseInt(query.get('end'), 10))
+    }
+
+    this.setState({sortBy, startDate, endDate})
+    this.getListProducts(1, sortBy, startDate, endDate)
   }
 
   renderRankChange(pct_change, rank) {
@@ -91,19 +109,24 @@ export default class Products extends Component {
   }
 
   parseDatetime(date) {
-    if(date === '') return '';
-    const formatDate = new Date(date);
-    let dd = formatDate.getDate();
-    let mm = formatDate.getMonth()+1; //January is 0!
+    try {
+      if(date === '') return '';
+      const formatDate = new Date(date);
+      let dd = formatDate.getDate();
+      let mm = formatDate.getMonth()+1; //January is 0!
 
-    let yyyy = formatDate.getFullYear();
-    if(dd < 10){
-        dd = '0' + dd;
-    } 
-    if(mm < 10){
-        mm = '0' + mm;
-    } 
-    return mm + '/' + dd + '/' + yyyy;
+      let yyyy = formatDate.getFullYear();
+      if(dd < 10){
+          dd = '0' + dd;
+      } 
+      if(mm < 10){
+          mm = '0' + mm;
+      } 
+      return mm + '-' + dd + '-' + yyyy;
+    } catch (error) {
+      return ''
+    }
+    
   }
 
   onChangeKeywords(keywords) {

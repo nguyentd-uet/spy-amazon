@@ -1,7 +1,8 @@
-const {crawlData} = require('../services/crawler');
-const LinkCrawl = require('../models/link_crawl');
+const {crawlData} = require('./services/crawler');
+const LinkCrawl = require('./models/link_crawl');
 
-function crawlJob() {
+async function crawlJob() {
+    console.log('start crawl')
     LinkCrawl.find({status: true},async function(err, links) {
         if(links && links.length > 0) {
             for (let i = 0; i < links.length; i++) {
