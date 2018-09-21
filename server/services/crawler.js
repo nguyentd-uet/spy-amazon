@@ -73,7 +73,6 @@ async function getProductInfo(product_link, page, keyword, thumbnail) {
             if(document.querySelector('#ASIN')) {
                 asin =  document.querySelector('#ASIN').value;
             } else {
-                console.log('product_link: ' + product_link)
                 return;
             }
             const price = document.querySelector('#priceblock_ourprice') ? document.querySelector('#priceblock_ourprice').innerText : '';
