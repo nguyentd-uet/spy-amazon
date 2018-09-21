@@ -15,10 +15,10 @@ export default class SideBar extends Component {
                         </div>
                         <div className="float-left info">
                             <p>{userInfo.username}</p>
-                            <a href="#"><i className="fa fa-circle text-success"></i> Online</a>
+                            <a href={null}><i className="fa fa-circle text-success"></i> Online</a>
                         </div>
                     </div>
-                    <form action="#" method="get" className="sidebar-form">
+                    <form action={null} method="get" className="sidebar-form">
                         <div className="input-group">
                         <input type="text" name="q" className="form-control" placeholder="Search..." />
                         <span className="input-group-btn">
@@ -62,7 +62,7 @@ const NavItemLv2 = withRouter((props) => {
 
     return (
         <li className={className}>
-            <a href="#">
+            <a href={null}>
                 <i className={item.icon}></i> 
                 <span>{' ' + item.title}</span>
                 <span className="pull-right-container">

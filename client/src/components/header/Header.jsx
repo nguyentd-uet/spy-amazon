@@ -27,12 +27,12 @@ export default class Header extends Component {
     render() {
         return (
             <header className="main-header" id='header-admin'>
-                <a href="#" className="logo">
+                <a href={null} className="logo">
                     <span className="logo-mini"><b>A</b>LT</span>
                     <span className="logo-lg"><b>Admin</b>LTE</span>
                 </a>
                 <nav className="navbar navbar-static-top">
-                    <a href="#" className="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <a href={null} className="sidebar-toggle" data-toggle="push-menu" role="button">
                         {/* <span className="sr-only">Toggle navigation</span> */}
                         <i className="fas fa-bars"></i>
                     </a>
@@ -61,7 +61,7 @@ export default class Header extends Component {
                                     </DropdownMenu>
                                 </ButtonDropdown>
 
-                                <button href="#" className='btn' 
+                                <button href={null} className='btn' 
                                     style={{
                                         padding: '5px 12px 6px 12px', 
                                         border: '0', 

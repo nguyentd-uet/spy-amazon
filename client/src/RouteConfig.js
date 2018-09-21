@@ -43,7 +43,7 @@ const routes = [
 
 function flatRouteConfig(routes) {
     let flatRoutes = []
-    Array.isArray(routes) && routes.map(item => {
+    Array.isArray(routes) && routes.forEach(item => {
         if (item.children) {
             flatRoutes.push(...item.children)
         } else {

@@ -69,7 +69,7 @@ export default class Setting extends Component {
                 <section className="content-header mt-0">
                     <h1>Setting</h1>
                     <ol className="breadcrumb">
-                        <li><a href="#"><i className="fas fa-tachometer-alt"></i> Home</a></li>
+                        <li><a href={null}><i className="fas fa-tachometer-alt"></i> Home</a></li>
                         <li className="active">Setting</li>
                     </ol>
                 </section>
@@ -112,15 +112,15 @@ export default class Setting extends Component {
                                                         links.length > 0 && links.map((item, index) => {
                                                             return (
                                                                 <tr key={item._id}>
-                                                                    <th scope="row">{index+1}</th>
-                                                                    <td>
-                                                                        <span className='text-primary' 
-                                                                            style={{cursor: 'pointer'}} 
-                                                                            onClick={this.onOpenEditLinkModal.bind(this, item)}
-                                                                        >
-                                                                            {item.crawl_link}
+                                                                    <th scope="row" 
+                                                                        onClick={this.onOpenEditLinkModal.bind(this, item)}
+                                                                        style={{cursor: 'pointer'}}
+                                                                    >
+                                                                        <span className='text-primary'>
+                                                                            {index+1}
                                                                         </span>
-                                                                    </td>
+                                                                    </th>
+                                                                    <td><a href={item.crawl_link} target='_blank'>{item.crawl_link}</a></td>
                                                                     <td>{item.keyword}</td>
                                                                     <td>{item.type}</td>
                                                                     <td>
@@ -134,7 +134,7 @@ export default class Setting extends Component {
                                                                     <td className='text-center'>
                                                                         <i className='fas fa-pen text-info mx-2' 
                                                                             style={{cursor: 'pointer'}}
-                                                                            onClick={this.onOpenEditLinkModal.bind(this)}>
+                                                                            onClick={this.onOpenEditLinkModal.bind(this, item)}>
                                                                         </i>
                                                                         <i className='fas fa-trash-alt text-danger' 
                                                                             style={{cursor: 'pointer'}} 

@@ -58,7 +58,7 @@ export default class ProductModal extends Component {
                 const rank_history = nextProps.productInfo.rank_history
                 productRanks.labels = []
                 productRanks.datasets[0].data = []
-                rank_history.map(item => {
+                rank_history.forEach(item => {
                     const keyValue = Object.entries(item)[0]
                     const formatedDate = this.parseDatetime(parseInt(keyValue[0], 10))
                     productRanks.labels.push(formatedDate)

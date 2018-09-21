@@ -7,7 +7,7 @@ export default class Content extends Component {
                 <section className="content-header mt-0">
                     <h1>Dashboard</h1>
                     <ol className="breadcrumb">
-                        <li><a href="#"><i className="fas fa-tachometer-alt"></i> Home</a></li>
+                        <li><a href={null}><i className="fas fa-tachometer-alt"></i> Home</a></li>
                         <li className="active">Dashboard</li>
                     </ol>
                 </section>

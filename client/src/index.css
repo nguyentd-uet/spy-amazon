@@ -1,16 +1,19 @@
 /* Sticky footer styles
 -------------------------------------------------- */
+@import url("https://fonts.googleapis.com/css?family=Roboto");
 html {
   position: relative;
   min-height: 100%; }
-  html body .header {
-    background-color: #f8f9fa; }
-  html body main {
-    padding-bottom: 18px; }
-  html body .App {
-    /* Margin bottom by footer height */
-    margin-bottom: 242px; }
-  html body .footer {
-    /* Set the fixed height of the footer here */ }
-  html body .text-yellow {
-    color: yellow; }
+  html body {
+    font-family: 'Roboto', sans-serif; }
+    html body .header {
+      background-color: #f8f9fa; }
+    html body main {
+      padding-bottom: 18px; }
+    html body .App {
+      /* Margin bottom by footer height */
+      margin-bottom: 242px; }
+    html body .footer {
+      /* Set the fixed height of the footer here */ }
+    html body .text-yellow {
+      color: yellow; }

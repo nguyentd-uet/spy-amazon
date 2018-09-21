@@ -48,7 +48,7 @@ export default class Login extends Component {
         return (
             <div className="login-box" style={{border: '1px solid #ddd'}}>
                 <div className="login-logo">
-                    <a href="#"><b>Admin</b>LTE</a>
+                    <a href={null}><b>Admin</b>LTE</a>
                 </div>
                 <div className="login-box-body">
                     <p className="login-box-msg">Sign in to start your session</p>
@@ -85,8 +85,8 @@ export default class Login extends Component {
                         </div>
                     </div>
 
-                    <a href="#">I forgot my password</a><br />
-                    <a href='#' className="text-center" onClick={this.onClickRegisterBtn}>Register a new membership</a>
+                    <a href={null}>I forgot my password</a><br />
+                    <a href={null} className="text-center" onClick={this.onClickRegisterBtn}>Register a new membership</a>
 
                 </div>
             </div>

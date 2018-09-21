@@ -1,7 +1,7 @@
-.card-effect-1 {
+.products-page .card-effect-1 {
   transition: transform .5s;
   cursor: pointer; }
-  .card-effect-1::after {
+  .products-page .card-effect-1::after {
     position: absolute;
     top: 0;
     left: 0;
@@ -12,14 +12,14 @@
     content: '';
     opacity: 0;
     z-index: -1; }
-  .card-effect-1:hover, .card-effect-1:focus {
+  .products-page .card-effect-1:hover, .products-page .card-effect-1:focus {
     transform: scale3d(1.006, 1.006, 1); }
-    .card-effect-1:hover::after, .card-effect-1:focus::after {
+    .products-page .card-effect-1:hover::after, .products-page .card-effect-1:focus::after {
       opacity: 1; }
 
-.card-effect-2 {
+.products-page .card-effect-2 {
   cursor: pointer; }
-  .card-effect-2::before, .card-effect-2::after {
+  .products-page .card-effect-2::before, .products-page .card-effect-2::after {
     position: absolute;
     top: 0;
     right: 0;
@@ -29,23 +29,23 @@
     content: '';
     opacity: 0;
     pointer-events: none; }
-  .card-effect-2::before {
+  .products-page .card-effect-2::before {
     transform: scale3d(0, 1, 1);
     transform-origin: left top;
     border-top: 1px solid #acacac;
     border-bottom: 1px solid #acacac; }
-  .card-effect-2::after {
+  .products-page .card-effect-2::after {
     transform: scale3d(1, 0, 1);
     transform-origin: right top;
     border-right: 1px solid #acacac;
     border-left: 1px solid #acacac; }
-  .card-effect-2:hover::before, .card-effect-2:hover::after, .card-effect-2:focus::before, .card-effect-2:focus::after {
+  .products-page .card-effect-2:hover::before, .products-page .card-effect-2:hover::after, .products-page .card-effect-2:focus::before, .products-page .card-effect-2:focus::after {
     transform: scale3d(1, 1, 1);
     opacity: 1; }
 
-.card-effect-3 {
+.products-page .card-effect-3 {
   cursor: pointer; }
-  .card-effect-3::before, .card-effect-3::after {
+  .products-page .card-effect-3::before, .products-page .card-effect-3::after {
     position: absolute;
     top: 0;
     right: 0;
@@ -56,30 +56,38 @@
     background: rgba(255, 255, 255, 0.1);
     content: '';
     pointer-events: none; }
-  .card-effect-3::before {
+  .products-page .card-effect-3::before {
     transform-origin: left top; }
-  .card-effect-3::after {
+  .products-page .card-effect-3::after {
     transform-origin: right bottom; }
-  .card-effect-3:hover::before, .card-effect-3:hover::after, .card-effect-3:focus::before, .card-effect-3:focus::after {
+  .products-page .card-effect-3:hover::before, .products-page .card-effect-3:hover::after, .products-page .card-effect-3:focus::before, .products-page .card-effect-3:focus::after {
     transform: scale3d(1, 1, 1); }
 
-.InputFromTo .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
+.products-page .InputFromTo .DayPicker-Day--selected:not(.DayPicker-Day--start):not(.DayPicker-Day--end):not(.DayPicker-Day--outside) {
   background-color: #f0f8ff !important;
   color: #4a90e2; }
 
-.InputFromTo .DayPicker-Day {
+.products-page .InputFromTo .DayPicker-Day {
   border-radius: 0 !important; }
 
-.InputFromTo .DayPicker-Day--start {
+.products-page .InputFromTo .DayPicker-Day--start {
   border-top-left-radius: 50% !important;
   border-bottom-left-radius: 50% !important; }
 
-.InputFromTo .DayPicker-Day--end {
+.products-page .InputFromTo .DayPicker-Day--end {
   border-top-right-radius: 50% !important;
   border-bottom-right-radius: 50% !important; }
 
-.InputFromTo .DayPickerInput-Overlay {
+.products-page .InputFromTo .DayPickerInput-Overlay {
   width: 550px; }
 
-.InputFromTo .InputFromTo-to .DayPickerInput-Overlay {
+.products-page .InputFromTo .InputFromTo-to .DayPickerInput-Overlay {
   margin-left: -198px; }
+
+.products-page .price-overlay {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  border-radius: 2px; }

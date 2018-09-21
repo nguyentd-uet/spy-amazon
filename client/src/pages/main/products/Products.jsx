@@ -46,7 +46,7 @@ export default class Products extends Component {
     }
     const startDateFormat = this.parseDatetime(startDate)
     const endDateFormat = this.parseDatetime(endDate)
-    this.setState({sortBy: e.target.value, startDate: startDateFormat, endDate: endDateFormat})
+    this.setState({sortBy: e.target.value, startDate: startDateFormat, endDate: endDateFormat, page: 1})
     this.getListProducts(1, e.target.value, startDate, endDate)
   }
 
@@ -62,7 +62,7 @@ export default class Products extends Component {
   }
 
   onCancelDatePicker() {
-    this.setState({startDate: '', endDate: ''})
+    this.setState({startDate: '', endDate: '', page: 1})
     this.getListProducts(1, this.state.sortBy, '', '')
   }
 
@@ -120,7 +120,7 @@ export default class Products extends Component {
     .then(res => {
       if(res.success) {
         const productUpdate = [...products, ...res.data]
-        this.setState({products: productUpdate, page: nextPage, isLoading: false})
+        this.setState({products: productUpdate, page: nextPage, isLoading: false, total: res.total})
       } else {
         this.setState({isLoading: false})
       }
@@ -132,15 +132,15 @@ export default class Products extends Component {
   }
 
   render() {
-    const { products, sortBy, page, total, isShownModal, productInfo, startDate, endDate, keywords, isLoading } = this.state
+    const { products, sortBy, total, isShownModal, productInfo, startDate, endDate, keywords, isLoading } = this.state
 
     const currentDate = new Date()
     return (
-      <div>
+      <div className='products-page'>
         <section className="content-header mt-0">
           <h1>Products</h1>
           <ol className="breadcrumb">
-            <li><a href="#"><i className="fas fa-tachometer-alt"></i> Home</a></li>
+            <li><a href={null}><i className="fas fa-tachometer-alt"></i> Home</a></li>
             <li className="active">Products</li>
           </ol>
         </section>
@@ -148,7 +148,7 @@ export default class Products extends Component {
           <div className="row">
             <div className="col-md-12">
               <div className="box">
-                <div className="box-header with-border">
+                <div className="box-header with-border pb-0">
                   <div className="form-group row mb-0">
                     <label className='col-form-label col-md-1'>Sort by</label>
                     <select className='form-control col-md-2' value={sortBy} onChange={this.onChangeSortBySelect.bind(this)}>
@@ -172,7 +172,7 @@ export default class Products extends Component {
                       }
                     </div>
                     <div className='col-md-2'>
-                      <b className='float-right'>{total} products</b>
+                      <b className='float-right'>{products.length + '/' + total} products</b>
                     </div>
                   </div>
                   <div className="form-group row mb-0">
@@ -182,19 +182,22 @@ export default class Products extends Component {
                     </div>
                   </div>
                 </div>
-                <div className="box-body">
+                <div className="box-body pt-1">
                   <ProductModal isOpen={isShownModal} toggle={this.toggleModal.bind(this)} productInfo={productInfo} />
-                  <div className="row">
+                  <div className="row mx-0">
                     {
                       products.length > 0 && products.map((item, index) => {
                         return (
-                          <div className="col-md-2 mb-3" key={item._id} onClick={this.onSelectProduct.bind(this, item)}>
+                          <div className="col-md-2 mb-3 p-1" key={item._id} onClick={this.onSelectProduct.bind(this, item)}>
                             <div className="card card-effect-2">
-                              <img className="card-img-top" src={item.thumbnail} alt={item.title}/>
-                              <div className="card-img-overlay p-0">
-                                <b>{item.price}</b>
+                              <div style={{position:'relative'}}>
+                                <img className="card-img-top" src={item.thumbnail} alt={item.title}/>
+                                <div className="price-overlay">
+                                  <span className='p-1'>{item.price}</span>
+                                </div>
                               </div>
-                              <div className="card-body pt-0">
+                              
+                              <div className="card-body pt-0 px-2 pb-2">
                                 {
                                   this.renderRankChange(item.pct_change, item.newest_rank)
                                 }
@@ -203,7 +206,7 @@ export default class Products extends Component {
                                 <p className='card-text'>
                                   ASIN: <b>{item.asin}</b>
                                   <br/>
-                                  {this.parseDatetime(item.first_time_on_amazon)}
+                                  <span style={{fontSize: 'small'}}>First time listed {this.parseDatetime(item.first_time_on_amazon)}</span>
                                 </p>
                               </div>
                             </div>

@@ -105,14 +105,14 @@ export default class Register extends Component {
                         <div className="col-xs-8 mb-2">
                             <div className="custom-control custom-checkbox">
                                 <input type="checkbox" className="custom-control-input"/>
-                                <label className="custom-control-label">I agree to the <a href="#">terms</a></label>
+                                <label className="custom-control-label">I agree to the <a href={null}>terms</a></label>
                             </div>
                         </div>
                         <div className="col-xs-4">
                             <button className="btn btn-primary btn-block btn-flat" onClick={() => this.onClickRegisterBtn()}>Register</button>
                         </div>
                     </div>
-                    <a href="#" className="text-center" onClick={this.onClickRedirectToLogin}>I already have a membership</a>
+                    <a href={null} className="text-center" onClick={this.onClickRedirectToLogin}>I already have a membership</a>
                 </div>
             </div>
         )
