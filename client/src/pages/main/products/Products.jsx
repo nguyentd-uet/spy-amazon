@@ -7,11 +7,13 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css'
 import TagInput from './TagInput'
 
+const SORT_BY_DEFAULT = 'top'
+
 export default class Products extends Component {
   state = {
     products: [],
     page: 1,
-    sortBy: 'top',
+    sortBy: SORT_BY_DEFAULT,
     total: 0,
     isShownModal: false,
     productInfo: {},
@@ -72,7 +74,10 @@ export default class Products extends Component {
 
   componentDidMount() {
     const query = new URLSearchParams(this.props.location.search)
-    const sortBy = query.get('sort')
+    let sortBy = SORT_BY_DEFAULT
+    if(query.get('sort')) {
+      sortBy = query.get('sort')
+    }
 
     let startDate = ''
     if (query.get('start') && !isNaN(parseInt(query.get('start'), 10))) {
