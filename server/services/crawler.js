@@ -72,8 +72,10 @@ async function getProductInfo(product_link, page, keyword, thumbnail) {
             let asin = ''
             if(document.querySelector('#ASIN')) {
                 asin =  document.querySelector('#ASIN').value;
+            } else if(!document.querySelector('#ASIN') && document.querySelector('#averageCustomerReviews')) {
+                asin = document.querySelector('#averageCustomerReviews').getAttribute('data-asin')
             } else {
-                return;
+                return '';
             }
             const price = document.querySelector('#priceblock_ourprice') ? document.querySelector('#priceblock_ourprice').innerText : '';
 
@@ -118,6 +120,10 @@ async function getProductInfo(product_link, page, keyword, thumbnail) {
             }
             return data;
         });
+
+        if (!product) {
+            return;
+        }
 
         product.product_link = product_link;
         product.thumbnail = thumbnail;
