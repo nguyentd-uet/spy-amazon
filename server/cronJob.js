@@ -1,4 +1,4 @@
-require('dotenv').load();
+// require('dotenv').load();
 const {crawlData} = require('./services/crawler');
 const LinkCrawl = require('./models/link_crawl');
 var db = require('./services/dbConnect');
