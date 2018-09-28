@@ -1,15 +1,15 @@
 import { postWithoutAuth } from './ApiSender'
 
 function registerUser(payload) {
-    return postWithoutAuth('user/register', payload)
+    return postWithoutAuth('users/register', payload)
 }
 
 function login(payload) {
-    return postWithoutAuth('user/login', payload)
+    return postWithoutAuth('users/login', payload)
 }
 
 function checkToken(token) {
-    return postWithoutAuth('user/checkToken', {token})
+    return postWithoutAuth('users/checkToken', {token})
 }
 
 export { registerUser, login, checkToken }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getAllProducts } from '../../../api/ProductApi'
+import { getAllProducts, getProductById } from '../../../api/ProductApi'
 import './Products.css'
 import ProductModal from './ProductModal'
 // import moment from 'moment';
@@ -24,6 +24,9 @@ export default class Products extends Component {
   }
 
   toggleModal() {
+    if(this.state.isShownModal) {
+      this.props.history.goBack()
+    }
     this.setState({isShownModal: !this.state.isShownModal});
   }
 
@@ -56,6 +59,7 @@ export default class Products extends Component {
 
   onSelectProduct(selectedProduct) {
     this.setState({productInfo: selectedProduct, isShownModal: true})
+    this.props.history.push(`/products/${selectedProduct._id}`)
   }
 
   onApplyDatePicker(event, picker) {
@@ -73,7 +77,8 @@ export default class Products extends Component {
   }
 
   componentDidMount() {
-    const query = new URLSearchParams(this.props.location.search)
+    const { location } = this.props
+    const query = new URLSearchParams(location.search)
     let sortBy = SORT_BY_DEFAULT
     if(query.get('sort')) {
       sortBy = query.get('sort')
@@ -89,8 +94,16 @@ export default class Products extends Component {
       endDate = this.parseDatetime(parseInt(query.get('end'), 10))
     }
 
-    this.setState({sortBy, startDate, endDate})
-    this.getListProducts(1, sortBy, startDate, endDate)
+    const productId = location.pathname.split('/')[2]
+    if(productId) {
+      getProductById(productId)
+      .then(res => {
+        this.setState({isShownModal: true, productInfo: res.data})
+      })
+    } else {
+      this.setState({sortBy, startDate, endDate})
+      this.getListProducts(1, sortBy, startDate, endDate)
+    }
   }
 
   renderRankChange(pct_change, rank) {

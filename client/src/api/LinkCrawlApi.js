@@ -1,24 +1,24 @@
 import { get, post, put, deleteRequest } from './ApiSender'
 
 function getAllLink() {
-    return get(`link/all/get`)
+    return get(`links`)
 }
 
 function getLinkById(id) {
-    return get('link/' + id)
+    return get('links/' + id)
 }
 
 function postLink(payload) {
-    return post('link', payload)
+    return post('links', payload)
 }
 
 function putLink(id, payload) {
     console.log(payload)
-    return put('link/' + id, payload)
+    return put('links/' + id, payload)
 }
 
 function deleteLink(id) {
-    return deleteRequest('link/' + id)
+    return deleteRequest('links/' + id)
 }
 
 export { getAllLink, getLinkById, postLink, putLink, deleteLink }

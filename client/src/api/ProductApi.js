@@ -7,23 +7,23 @@ function getAllProducts(page, sortBy, startDate = '', endDate = '', keywords= []
             return keywordQuery += `&keywords[]=${item}`
         })
     }
-    return get(`product/all/get/${page}/${sortBy}?start=${startDate}&end=${endDate}${keywordQuery}`)
+    return get(`products?page=${page}&sort=${sortBy}&start=${startDate}&end=${endDate}${keywordQuery}`)
 }
 
 function getProductById(id) {
-    return get('product/' + id)
+    return get('products/' + id)
 }
 
 function postProduct(payload) {
-    return post('product', payload)
+    return post('products', payload)
 }
 
 function putProduct(id, payload) {
-    return put('product/' + id, payload)
+    return put('products/' + id, payload)
 }
 
 function deleteProduct(id) {
-    return deleteRequest('product/' + id)
+    return deleteRequest('products/' + id)
 }
 
 export { getAllProducts, getProductById, postProduct, putProduct, deleteProduct }
