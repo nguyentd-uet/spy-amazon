@@ -1,9 +1,8 @@
 var mongoose = require('mongoose');
-var config = require('../config');
 
 exports.connectMongoDb = function() {
     //connect to MongoDB
-    var mongodbUri = config.dbMlab
+    var mongodbUri = process.env.dbUriLocal ||  process.env.dbMlab
     const configs = {
         useNewUrlParser: true,
     };

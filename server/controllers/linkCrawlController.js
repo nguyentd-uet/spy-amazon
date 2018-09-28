@@ -1,14 +1,12 @@
 var LinkCrawl = require('../models/link_crawl');
+var mongoose = require('mongoose')
 
 // get all link
 exports.getAllLink = function (req, res) {
     try {
-        LinkCrawl.find({ user_id: req.user._id }, function(err, links) {
+        LinkCrawl.find({ user_email: req.user.email }, function(err, links) {
             if(err) {
-                return res.json({
-                    success: false,
-                    message: err.message
-                })
+                throw err
             }
             return res.json({
                 success: true,
@@ -27,18 +25,22 @@ exports.getAllLink = function (req, res) {
 exports.getLinkById = function (req, res) {
     try {
         const { id } = req.params
-        LinkCrawl.findOne({ _id: id }, function(err, link) {
-            if(err) {
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            LinkCrawl.findOne({ _id: id }, function(err, link) {
+                if(err) {
+                    throw err
+                }
                 return res.json({
-                    success: false,
-                    message: err.message
+                    success: true,
+                    data: link
                 })
-            }
-            return res.json({
-                success: true,
-                data: link
             })
-        })
+        } else {
+            return res.json({
+                success: false,
+                message: 'Id is invalid'
+            })
+        }
     } catch (error) {
         return res.json({
             success: false,
@@ -51,13 +53,10 @@ exports.getLinkById = function (req, res) {
 exports.postLink = function (req, res) {
     try {
         const link = new LinkCrawl(req.body)
-        link.user_id = req.user._id
+        link.user_email = req.user.email
         link.save(function (err, newLink) {
             if (err) {
-                return res.json({
-                    success: false,
-                    message: err.message
-                });
+                throw err
             }
             return res.json({
                 success: true,
@@ -76,19 +75,24 @@ exports.postLink = function (req, res) {
 // put a link
 exports.putLink = function (req, res) {
     try {
-        LinkCrawl.findOneAndUpdate({_id: req.params.id}, req.body, function(err, linkUpdated) {
-            if(err) {
+        const { id } = req.params
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            LinkCrawl.findOneAndUpdate({_id: id}, req.body, function(err, linkUpdated) {
+                if(err) {
+                    throw err
+                }
                 return res.json({
-                    success: false,
-                    message: err.message
+                    success: true,
+                    message: 'Update link success',
+                    data: linkUpdated
                 })
-            }
-            return res.json({
-                success: true,
-                message: 'Update link success',
-                data: linkUpdated
             })
-        })
+        } else {
+            return res.json({
+                success: false,
+                message: 'Id is invalid'
+            })
+        }
     } catch (error) {
         return res.json({
             success: false,
@@ -100,18 +104,23 @@ exports.putLink = function (req, res) {
 // delete a link
 exports.deleteLink = function (req, res) {
     try {
-        LinkCrawl.findOneAndRemove({_id: req.params.id}, function(err) {
-            if(err) {
+        const { id } = req.params
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            LinkCrawl.findOneAndRemove({_id: id}, function(err) {
+                if(err) {
+                    throw err
+                }
                 return res.json({
-                    success: false,
-                    message: err.message
+                    success: true,
+                    message: 'Delete link success'
                 })
-            }
-            return res.json({
-                success: true,
-                message: 'Delete link success'
             })
-        })
+        } else {
+            return res.json({
+                success: false,
+                message: 'Id is invalid'
+            })
+        }
     } catch (error) {
         return res.json({
             success: false,

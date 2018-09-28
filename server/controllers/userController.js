@@ -1,5 +1,4 @@
 var User = require('../models/user');
-var config = require('../config');
 var jwt = require('jsonwebtoken');
 var bcrypt = require('bcrypt');
 
@@ -53,6 +52,7 @@ exports.login = function (req, res) {
         User.findOne({
             email: email
         }, function (err, user) {
+            if (err) throw err
             if (!user) {
                 return res.json({
                     success: false,
@@ -60,9 +60,10 @@ exports.login = function (req, res) {
                 })
             } else if (user && user.comparePassword(password)) {
                 const payload = {
-                    email: user.email
+                    email: user.email,
+                    username: user.username
                 };
-                const jwtToken = jwt.sign(payload, config.jwtSecret, {
+                const jwtToken = jwt.sign(payload, process.env.jwtSecret, {
                     expiresIn: '1d'
                 });
                 console.log('jwtToken: ' + jwtToken);
@@ -97,10 +98,7 @@ exports.getListUsers = function (req, res) {
         // find
         User.find({}, function (err, users) {
             if (err) {
-                return res.json({
-                    success: false,
-                    message: err.message
-                })
+                throw err
             }
             if (users) {
                 users.forEach(function (item) {
@@ -127,7 +125,7 @@ exports.getListUsers = function (req, res) {
 exports.checkToken = function (req, res) {
     try {
         var jwtToken = req.body.token;
-        jwt.verify(jwtToken, config.jwtSecret, function (err, payload) {
+        jwt.verify(jwtToken, process.env.jwtSecret, function (err, payload) {
             if (err) {
                 return res.json({
                     success: false,

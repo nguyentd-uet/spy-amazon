@@ -19,7 +19,7 @@ var LinkCrawlSchema = new mongoose.Schema({
         type: Number,
         default: 20
     },
-    user_id: String,
+    user_email: String,
     created_date: {
         type: Date,
         default: new Date()

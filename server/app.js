@@ -1,3 +1,4 @@
+require('dotenv').load();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -32,9 +33,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use('/api', indexRouter);
-app.use('/api/user', userRouter);
-app.use('/api/link', linkCrawlRouter);
-app.use('/api/product', productRouter);
+app.use('/api/users', userRouter);
+app.use('/api/links', linkCrawlRouter);
+app.use('/api/products', productRouter);
 
 // any routes not picked up by the server api will be handled by the react router
 app.use('/*', staticFiles)

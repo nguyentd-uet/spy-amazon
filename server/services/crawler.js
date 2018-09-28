@@ -154,49 +154,56 @@ function addToDatabase(product) {
 
         Product.findOne({asin: product.asin}, function(err, data) {
             if(err) {
-                console.log(err);
-                return;
+                throw err
             }
 
             // neu da ton tai product, cap nhat product 
             if (data) {
-                data.price = product.price;
-                data.brand = product.brand;
-                data.title = product.title;
-                data.newest_rank = product.newest_rank;
+                console.log(data)
+                let updateData = JSON.parse(JSON.stringify(data));
+                updateData.price = product.price;
+                updateData.brand = product.brand;
+                updateData.title = product.title;
+                updateData.newest_rank = product.newest_rank;
                 
                 // so sanh ngay cuoi cung update rank history voi lan crawl nay
                 // neu cung ngay, cap nhat vao phan tu cuoi cua array
                 // neu ko cung ngay, push vao cuoi array
                 const parseDate_lastCrawlTime = new Date(product.last_crawl_time);
-                const lastElement_rankHistory = data.rank_history[data.rank_history.length - 1];
+                const lastElement_rankHistory = updateData.rank_history[updateData.rank_history.length - 1];
                 const keyOfLastElement = Object.keys(lastElement_rankHistory)[0];
-                const lastDayCrawl_rankHistory = new Date(keyOfLastElement);
+                const lastDayCrawl_rankHistory = new Date(parseInt(keyOfLastElement));
                 if (isSameDay(parseDate_lastCrawlTime, lastDayCrawl_rankHistory)) {
-                    data.rank_history[data.rank_history.length - 1] = {
+                    updateData.rank_history[updateData.rank_history.length - 1] = {
                         [product.last_crawl_time]: product.newest_rank
                     }
                 } else {
-                    data.rank_history.push({
+                    updateData.rank_history.push({
                         [product.last_crawl_time]: product.newest_rank
                     });
                 }
 
                 // ty le tang hoac giam rank
-                const lastRankObj = data.rank_history[data.rank_history.length - 2]
-                const lastRank = Object.values(lastRankObj)[0]
-                const pct_change = (product.newest_rank - lastRank)*100/lastRank
-                data.pct_change = parseFloat(pct_change).toFixed(1)
-                
-                if (data.keywords.indexOf(product.keyword) === -1) {
-                    data.keywords.push(product.keyword);
+                if (updateData.rank_history.length > 1) {
+                    const lastRankObj = updateData.rank_history[updateData.rank_history.length - 2]
+                    const lastRank = Object.values(lastRankObj)[0]
+                    const pct_change = (product.newest_rank - lastRank)*100/lastRank
+                    updateData.pct_change = parseFloat(pct_change).toFixed(1)
                 }
-                data.last_crawl_time = product.last_crawl_time;
+                
+                if (updateData.keywords.indexOf(product.keyword) === -1) {
+                    updateData.keywords.push(product.keyword);
+                }
+                updateData.last_crawl_time = product.last_crawl_time;
 
-                data.save(function (err, updatedData) {
-                    if (err) console.log(err);
+                // newProduct.save(function (err, updatedData) {
+                //     if (err) throw err;
+                //     return;
+                // });
+                Product.updateOne({_id: data._id}, {...updateData}, function(err, updatedData) {
+                    if (err) throw err;
                     return;
-                });
+                })
             } else {
                 // tao moi product
                 product.rank_history = [{
@@ -210,7 +217,7 @@ function addToDatabase(product) {
 
                 const newProduct = new Product(product);
                 newProduct.save(function (err, newData) {
-                    if (err) console.log(err);
+                    if (err) throw err;
                     return;
                 });
             }

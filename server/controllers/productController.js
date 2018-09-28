@@ -1,11 +1,12 @@
 var Product = require('../models/product');
+var mongoose = require('mongoose')
 
 // get all products
 exports.getAllProducts = function (req, res) {
     try {
         const perPage = 50
-        const page = req.params.page || 1
-        const sort = req.params.sort
+        const page = req.query.page || 1
+        const sort = req.query.sort
         let sortBy = {}
         let findBy = {}
         if(sort === 'top') {
@@ -27,7 +28,6 @@ exports.getAllProducts = function (req, res) {
             findBy.first_time_on_amazon = {$lte: end}
         }
 
-        console.log(keywords)
         if(Array.isArray(keywords) && keywords.length > 0) {
             findBy.keywords = { $all: keywords}
         }
@@ -37,17 +37,11 @@ exports.getAllProducts = function (req, res) {
         .limit(perPage)
         .exec(function(err, products) {
             if(err) {
-                return res.json({
-                    success: false,
-                    message: err.message
-                })
+                throw err
             }
             Product.countDocuments(findBy).exec(function(err, count) {
                 if (err) {
-                    return res.json({
-                        success: false,
-                        message: err.message
-                    })
+                    throw err
                 }
                 return res.json({
                     success: true,
@@ -70,18 +64,22 @@ exports.getAllProducts = function (req, res) {
 exports.getProductById = function (req, res) {
     try {
         const { id } = req.params
-        Product.findOne({ _id: id }, function(err, product) {
-            if(err) {
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            Product.findOne({ _id: id }, function(err, product) {
+                if(err) {
+                    throw err
+                }
                 return res.json({
-                    success: false,
-                    message: err.message
+                    success: true,
+                    data: product
                 })
-            }
-            return res.json({
-                success: true,
-                data: product
             })
-        })
+        } else {
+            return res.json({
+                success: false,
+                message: 'Id is invalid'
+            })
+        }
     } catch (error) {
         return res.json({
             success: false,
@@ -96,10 +94,7 @@ exports.postProduct = function (req, res) {
         const product = new Product(req.body)
         product.save(function (err, newProduct) {
             if (err) {
-                return res.json({
-                    success: false,
-                    message: err.message
-                });
+                throw err
             }
             return res.json({
                 success: true,
@@ -118,19 +113,24 @@ exports.postProduct = function (req, res) {
 // update a product
 exports.putProduct = function (req, res) {
     try {
-        Product.findOneAndUpdate({_id: req.params.id}, req.body, function(err, productUpdated) {
-            if(err) {
+        const { id } = req.params
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            Product.findOneAndUpdate({_id: id}, req.body, function(err, productUpdated) {
+                if(err) {
+                    throw err
+                }
                 return res.json({
-                    success: false,
-                    message: err.message
+                    success: true,
+                    message: 'Update product success',
+                    data: productUpdated
                 })
-            }
-            return res.json({
-                success: true,
-                message: 'Update product success',
-                data: productUpdated
             })
-        })
+        } else {
+            return res.json({
+                success: false,
+                message: 'Id is invalid'
+            })
+        }
     } catch (error) {
         return res.json({
             success: false,
@@ -142,18 +142,23 @@ exports.putProduct = function (req, res) {
 // delete a product
 exports.deleteProduct = function (req, res) {
     try {
-        Product.findOneAndRemove({_id: req.params.id}, function(err) {
-            if(err) {
+        const { id } = req.params
+        if (mongoose.Types.ObjectId.isValid(id)) {
+            Product.findOneAndRemove({_id: id}, function(err) {
+                if(err) {
+                    throw err
+                }
                 return res.json({
-                    success: false,
-                    message: err.message
+                    success: true,
+                    message: 'Delete product success'
                 })
-            }
-            return res.json({
-                success: true,
-                message: 'Delete product success'
             })
-        })
+        } else {
+            return res.json({
+                success: false,
+                message: 'Id is invalid'
+            })
+        }
     } catch (error) {
         return res.json({
             success: false,

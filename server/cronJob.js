@@ -1,6 +1,8 @@
+require('dotenv').load();
 const {crawlData} = require('./services/crawler');
 const LinkCrawl = require('./models/link_crawl');
 var db = require('./services/dbConnect');
+
 
 async function crawlJob() {
     db.connectMongoDb();
@@ -16,6 +18,8 @@ async function crawlJob() {
                     await crawlData(links[i].crawl_link, links[i].num_page_to_crawl);
                 }
             }
+            console.log('finish crawl');
+            return;
         }
     })
 }
