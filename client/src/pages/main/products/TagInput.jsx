@@ -19,13 +19,15 @@ export default class TagInput extends Component {
       }
       keywords.push(value.trim())
       this.setState({input: ''});
+      this.props.onChangeKeywords(keywords)
     }
 
     if (keywords.length && evt.keyCode === 8 && !this.state.input.length) {
       keywords.slice(0, keywords.length - 1)
+      this.props.onChangeKeywords(keywords)
     }
 
-    this.props.onChangeKeywords(keywords)
+    
   }
 
   handleRemoveItem(index) {

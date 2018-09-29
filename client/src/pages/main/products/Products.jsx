@@ -229,7 +229,7 @@ export default class Products extends Component {
                     {
                       products.length > 0 && products.map((item, index) => {
                         return (
-                          <div className="col-md-2 mb-3 p-1" key={item._id} onClick={this.onSelectProduct.bind(this, item)}>
+                          <div className="col-lg-2 col-md-3 col-sm-6 col-xs-12 mb-3 p-1" key={item._id} onClick={this.onSelectProduct.bind(this, item)}>
                             <div className="card card-effect-2">
                               <div style={{position:'relative'}}>
                                 <img className="card-img-top" src={item.thumbnail} alt={item.title}/>
