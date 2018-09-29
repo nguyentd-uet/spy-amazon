@@ -5,7 +5,7 @@ const Product = require('../models/product');
 async function crawlData(link, num_page_to_crawl) {
     try {
         // mở trình duyệt
-        const browser = await puppeteer.launch();
+        const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
         // Mở 1 page mới
         const page = await browser.newPage();
         let link_products = [];
