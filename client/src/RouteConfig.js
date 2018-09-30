@@ -1,7 +1,6 @@
 import React from 'react';
-import Dashboard from './pages/main/dashboard/Dashboard'
-import Products from './pages/main/products/Products'
-import Setting from './pages/main/setting/Setting'
+import Loadable from 'react-loadable'
+import Loading from './components/loading/Loading'
 
 const routes = [
     // menu level 2
@@ -22,23 +21,36 @@ const routes = [
     //     ]
     // },
     {
-      path: "/dashboard",
-      title: 'Dashboard',
-      icon: 'fas fa-tachometer-alt',
-      component: (props) => <Dashboard {...props} />
+        path: "/dashboard",
+        requireAuth: true,
+        title: 'Dashboard',
+        icon: 'fas fa-tachometer-alt',
+        component: createLoadable('main/dashboard/Dashboard')
     },
     {
-      path: "/products",
-      title: 'Products',
-      icon: 'fas fa-cubes',
-      component: (props) => <Products {...props} />
+        path: "/products",
+        requireAuth: true,
+        title: 'Products',
+        icon: 'fas fa-cubes',
+        component: createLoadable('main/products/Products')
     },
     {
         path: "/setting",
+        requireAuth: true,
         title: 'Setting',
         icon: 'fas fa-cog',
-        component: (props) => <Setting {...props} />
-      }
+        component: createLoadable('main/setting/Setting')
+    },
+    {
+        path: "/login",
+        requireAuth: false,
+        component: createLoadable('login/Login')
+    },
+    {
+        path: "/register",
+        requireAuth: false,
+        component: createLoadable('register/Register')
+    },
 ];
 
 function flatRouteConfig(routes) {
@@ -51,6 +63,13 @@ function flatRouteConfig(routes) {
         }
     })
     return flatRoutes
+}
+
+function createLoadable(path) {
+    return Loadable({
+        loader: () => import('./pages/' + path),
+        loading: () => <Loading size='50' />,
+    });
 }
 
 export const flatConfig = flatRouteConfig(routes)

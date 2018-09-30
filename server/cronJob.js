@@ -1,8 +1,10 @@
-// require('dotenv').load();
 const {crawlData} = require('./services/crawler');
 const LinkCrawl = require('./models/link_crawl');
 var db = require('./services/dbConnect');
 
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').load();
+}
 
 async function crawlJob() {
     db.connectMongoDb();

@@ -32,10 +32,10 @@ export default class SideBar extends Component {
                         {
                             routes.map((item, index) => {
                                 if (item.children) {
-                                    return <NavItemLv2 key={item.title} item={item} />
+                                    return <NavItemLv2 key={item.title + item.path} item={item} />
                                 } else {
                                     return (
-                                        <NavItem to={item.path} key={item.title}>
+                                        <NavItem to={item.path} key={item.title + item.path}>
                                             <i className={item.icon}></i> <span>{item.title}</span>
                                         </NavItem>
                                     )

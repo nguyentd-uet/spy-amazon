@@ -1,5 +1,3 @@
-// require('dotenv').load();
-var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
@@ -10,11 +8,12 @@ var indexRouter = require('./routes/index');
 var userRouter = require('./routes/user');
 var linkCrawlRouter = require('./routes/linkCrawl')
 var productRouter = require('./routes/product')
-// const { crawlJob } = require('./services/cronJob')
-
-// crawlJob();
 
 var app = express();
+
+if (process.env.NODE_ENV !== "production") {
+  require('dotenv').load();
+}
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

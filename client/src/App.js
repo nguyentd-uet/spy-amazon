@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Loadable from 'react-loadable'
 import Loading from './components/loading/Loading'
 import { Switch, Redirect } from 'react-router-dom'
 import PropsRoute from './components/PropsRoute'
@@ -10,19 +9,9 @@ import { flatConfig } from './RouteConfig'
 import { getUserInfo, logout, setUserInfo } from './helpers/AuthHelper'
 import store from 'store'
 
-const LoginLoadable = Loadable({
-  loader: () => import('./pages/login/Login'),
-  loading: () => <Loading size='50' />,
-});
-
-const RegisterLoadable = Loadable({
-  loader: () => import('./pages/register/Register'),
-  loading: () => <Loading size='50' />,
-});
-
 class App extends Component {
   state = {
-    isLogin: true,
+    isLogin: undefined,
     userInfo: {}
   }
 
@@ -47,7 +36,7 @@ class App extends Component {
       if(res.success) {
         const userInfo = store.get('user_info')
         if (userInfo) {
-          this.setState({userInfo: userInfo})
+          this.setState({isLogin: true, userInfo: userInfo})
         } else {
           this.setState({isLogin: false, userInfo: {}})
         }
@@ -64,7 +53,7 @@ class App extends Component {
   render() {
     const {isLogin, userInfo} = this.state;
 
-    if (isLogin) {
+    if (isLogin === true) {
       return (
         <div className="wrapper">
           <Header {...this.props} logout={this.logout.bind(this)} userInfo={userInfo} />
@@ -75,13 +64,16 @@ class App extends Component {
               <Switch>
                 {
                   flatConfig.map((item, index) => {
-                    return (
-                      <PropsRoute 
-                        key={index}
-                        path={item.path} 
-                        component={item.component}
-                      />
-                    )
+                    if (item.requireAuth) {
+                      return (
+                        <PropsRoute 
+                          key={item.path}
+                          path={item.path} 
+                          component={item.component}
+                        />
+                      )
+                    }
+                    return null;
                   })
                 }
 
@@ -91,12 +83,27 @@ class App extends Component {
           </div>
         </div>
       );
+    } else if (typeof isLogin === 'undefined') {
+      return <Loading size='50' />
     } else {
       return (
         <div>
           <Switch>
-            <PropsRoute exact path='/login' component={LoginLoadable} login={this.login.bind(this)} /> 
-            <PropsRoute path='/register' component={RegisterLoadable} /> 
+            {
+              flatConfig.map((item, index) => {
+                if (!item.requireAuth) {
+                  return (
+                    <PropsRoute 
+                      key={item.path}
+                      path={item.path} 
+                      component={item.component}
+                      login={this.login.bind(this)}
+                    />
+                  )
+                }
+                return null;
+              })
+            }
 
             <Redirect to='/login' />
           </Switch>

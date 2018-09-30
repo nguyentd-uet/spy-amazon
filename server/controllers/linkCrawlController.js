@@ -2,7 +2,7 @@ var LinkCrawl = require('../models/link_crawl');
 var mongoose = require('mongoose')
 
 // get all link
-exports.getAllLink = function (req, res) {
+exports.getAll = function (req, res) {
     try {
         LinkCrawl.find({ user_email: req.user.email }, function(err, links) {
             if(err) {
@@ -22,7 +22,7 @@ exports.getAllLink = function (req, res) {
 };
 
 // get link by id 
-exports.getLinkById = function (req, res) {
+exports.get = function (req, res) {
     try {
         const { id } = req.params
         if (mongoose.Types.ObjectId.isValid(id)) {
@@ -50,7 +50,7 @@ exports.getLinkById = function (req, res) {
 };
 
 // post a link
-exports.postLink = function (req, res) {
+exports.post = function (req, res) {
     try {
         const link = new LinkCrawl(req.body)
         link.user_email = req.user.email
@@ -73,7 +73,7 @@ exports.postLink = function (req, res) {
 };
 
 // put a link
-exports.putLink = function (req, res) {
+exports.put = function (req, res) {
     try {
         const { id } = req.params
         if (mongoose.Types.ObjectId.isValid(id)) {
@@ -102,7 +102,7 @@ exports.putLink = function (req, res) {
 };
 
 // delete a link
-exports.deleteLink = function (req, res) {
+exports.delete = function (req, res) {
     try {
         const { id } = req.params
         if (mongoose.Types.ObjectId.isValid(id)) {

@@ -2,21 +2,20 @@ var Product = require('../models/product');
 var mongoose = require('mongoose')
 
 // get all products
-exports.getAllProducts = function (req, res) {
+exports.getAll = function (req, res) {
     try {
         const perPage = 50
         const page = req.query.page || 1
         const sort = req.query.sort
+        const rank_min = req.query['rank-min'] || 0
+        const rank_max = req.query['rank-max']
+
         let sortBy = {}
         let findBy = {}
-        if(sort === 'top') {
+        if(sort === 'top' || sort === 'trend') {
             sortBy = {newest_rank: 1}
-            findBy.newest_rank = {$gt: 0}
         } else if(sort === 'newest') {
             sortBy = {first_time_on_amazon: -1}
-        } else if(sort === 'trend') {
-            sortBy = {newest_rank: 1}
-            findBy.newest_rank = {$gt: 0}
         }
 
         const {start, end, keywords} = req.query
@@ -26,6 +25,12 @@ exports.getAllProducts = function (req, res) {
             findBy.first_time_on_amazon = {$gte: start}
         } else if(!start && end) {
             findBy.first_time_on_amazon = {$lte: end}
+        }
+
+        if(rank_max) {
+            findBy.newest_rank = {$gte: rank_min, $lte: rank_max}
+        } else {
+            findBy.newest_rank = {$gte: rank_min}
         }
 
         if(Array.isArray(keywords) && keywords.length > 0) {
@@ -53,6 +58,7 @@ exports.getAllProducts = function (req, res) {
             })
         })
     } catch (error) {
+        console.log(error)
         return res.json({
             success: false,
             message: error.message
@@ -61,7 +67,7 @@ exports.getAllProducts = function (req, res) {
 };
 
 // get product by id
-exports.getProductById = function (req, res) {
+exports.get = function (req, res) {
     try {
         const { id } = req.params
         if (mongoose.Types.ObjectId.isValid(id)) {
@@ -89,7 +95,7 @@ exports.getProductById = function (req, res) {
 };
 
 // create a product
-exports.postProduct = function (req, res) {
+exports.post = function (req, res) {
     try {
         const product = new Product(req.body)
         product.save(function (err, newProduct) {
@@ -111,7 +117,7 @@ exports.postProduct = function (req, res) {
 };
 
 // update a product
-exports.putProduct = function (req, res) {
+exports.put = function (req, res) {
     try {
         const { id } = req.params
         if (mongoose.Types.ObjectId.isValid(id)) {
@@ -140,7 +146,7 @@ exports.putProduct = function (req, res) {
 };
 
 // delete a product
-exports.deleteProduct = function (req, res) {
+exports.delete = function (req, res) {
     try {
         const { id } = req.params
         if (mongoose.Types.ObjectId.isValid(id)) {

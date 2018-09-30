@@ -2,12 +2,15 @@ import React, { Component } from 'react'
 import { getAllProducts, getProductById } from '../../../api/ProductApi'
 import './Products.css'
 import ProductModal from './ProductModal'
-// import moment from 'moment';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css'
 import TagInput from './TagInput'
+import { Range } from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 const SORT_BY_DEFAULT = 'top'
+const RANK_MIN = 1
+const RANK_MAX = 1000000
 
 export default class Products extends Component {
   state = {
@@ -20,6 +23,9 @@ export default class Products extends Component {
     startDate: '',
     endDate: '',
     keywords: [],
+    rank_min: RANK_MIN,
+    rank_max: RANK_MAX,
+    timeout: null,
     isLoading: false
   }
 
@@ -30,8 +36,9 @@ export default class Products extends Component {
     this.setState({isShownModal: !this.state.isShownModal});
   }
 
-  getListProducts(page, sortBy = this.state.sortBy, startDate = this.state.startDate, endDate = this.state.endDate, keywords = this.state.keywords) {
-    getAllProducts(page, sortBy, startDate, endDate, keywords)
+  getListProducts(page, sortBy = this.state.sortBy, startDate = this.state.startDate, endDate = this.state.endDate, 
+    keywords = this.state.keywords, rank_min = this.state.rank_min, rank_max = this.state.rank_max) {
+    getAllProducts(page, sortBy, startDate, endDate, keywords, rank_min, rank_max)
     .then(res => {
       if(res.success) {
         this.setState({products: res.data, total: res.total})
@@ -41,20 +48,28 @@ export default class Products extends Component {
 
   onChangeSortBySelect(e) {
     let startDate, endDate
+    const { rank_min, rank_max} = this.state
     if (e.target.value === 'trend') {
       endDate = ''
       let currentDate = new Date()
       startDate = currentDate.setDate(currentDate.getDate() - 5)
-      this.props.history.push(`/products?sort=${e.target.value}&start=${startDate}`)
+      this.props.history.push(`/products?sort=${e.target.value}&start=${startDate}&rank-min=${rank_min}&rank-max=${rank_max}`)
     } else {
       startDate = ''
       endDate = ''
-      this.props.history.push(`/products?sort=${e.target.value}`)
+      this.props.history.push(`/products?sort=${e.target.value}&rank-min=${rank_min}&rank-max=${rank_max}`)
     }
+
     const startDateFormat = this.parseDatetime(startDate)
     const endDateFormat = this.parseDatetime(endDate)
-    this.setState({sortBy: e.target.value, startDate: startDateFormat, endDate: endDateFormat, page: 1})
-    this.getListProducts(1, e.target.value, startDate, endDate)
+    this.setState({
+      sortBy: e.target.value, 
+      startDate: startDateFormat, 
+      endDate: endDateFormat, 
+      page: 1, 
+      keywords: []
+    })
+    this.getListProducts(1, e.target.value, startDate, endDate, [], rank_min, rank_max)
   }
 
   onSelectProduct(selectedProduct) {
@@ -63,17 +78,19 @@ export default class Products extends Component {
   }
 
   onApplyDatePicker(event, picker) {
+    const {rank_min, rank_max, sortBy} = this.state
     const startDate = this.parseDatetime(picker.startDate)
     const endDate = this.parseDatetime(picker.endDate)
     this.setState({startDate: startDate, endDate: endDate})
     this.getListProducts(1, this.state.sortBy, startDate, endDate)
-    this.props.history.push(`/products?sort=${this.state.sortBy}&start=${startDate}&end=${endDate}`)
+    this.props.history.push(`/products?sort=${sortBy}&start=${startDate}&end=${endDate}&rank-min=${rank_min}&rank-max=${rank_max}`)
   }
 
   onCancelDatePicker() {
+    const {rank_min, rank_max, sortBy} = this.state
     this.setState({startDate: '', endDate: '', page: 1})
     this.getListProducts(1, this.state.sortBy, '', '')
-    this.props.history.push('/products?sort=' + this.state.sortBy)
+    this.props.history.push(`/products?sort=${sortBy}&rank-min=${rank_min}&rank-max=${rank_max}`)
   }
 
   componentDidMount() {
@@ -94,6 +111,16 @@ export default class Products extends Component {
       endDate = this.parseDatetime(parseInt(query.get('end'), 10))
     }
 
+    let rank_min = RANK_MIN
+    if (query.get('rank-min')) {
+      rank_min = parseInt(query.get('rank-min'), 10)
+    }
+
+    let rank_max = RANK_MAX
+    if (query.get('rank-max')) {
+      rank_max = parseInt(query.get('rank-max'), 10)
+    }
+
     const productId = location.pathname.split('/')[2]
     if(productId) {
       getProductById(productId)
@@ -101,8 +128,8 @@ export default class Products extends Component {
         this.setState({isShownModal: true, productInfo: res.data})
       })
     } else {
-      this.setState({sortBy, startDate, endDate})
-      this.getListProducts(1, sortBy, startDate, endDate)
+      this.setState({sortBy, startDate, endDate, rank_min, rank_max})
+      this.getListProducts(1, sortBy, startDate, endDate, this.state.keywords, rank_min, rank_max)
     }
   }
 
@@ -148,16 +175,16 @@ export default class Products extends Component {
   }
 
   onChangeKeywords(keywords) {
-    const { sortBy, startDate, endDate } = this.state
+    const { sortBy, startDate, endDate, rank_min, rank_max } = this.state
     this.setState({keywords})
-    this.getListProducts(1, sortBy, startDate, endDate, keywords)
+    this.getListProducts(1, sortBy, startDate, endDate, keywords, rank_min, rank_max)
   }
 
   onClickLoadMoreBtn() {
-    const { page, sortBy, startDate, endDate, keywords, products } = this.state
+    const { page, sortBy, startDate, endDate, keywords, products, rank_min, rank_max } = this.state
     const nextPage = page + 1
     this.setState({isLoading: true})
-    getAllProducts(nextPage, sortBy, startDate, endDate, keywords)
+    getAllProducts(nextPage, sortBy, startDate, endDate, keywords, rank_min, rank_max)
     .then(res => {
       if(res.success) {
         const productUpdate = [...products, ...res.data]
@@ -172,8 +199,33 @@ export default class Products extends Component {
     })
   }
 
+  onChangeSlider(value) {
+    let {sortBy, startDate, endDate, keywords, timeout} = this.state
+    const rank_min = value[0]
+    const rank_max = value[1]
+    this.setState({rank_min, rank_max})
+    this.props.history.push(`/products?sort=${sortBy}&start=${startDate}&end=${endDate}&rank-min=${rank_min}&rank-max=${rank_max}`)
+    clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      this.getListProducts(1, sortBy, startDate, endDate, keywords, rank_min, rank_max)
+    }, 2000)
+    this.setState({timeout})
+  }
+
   render() {
-    const { products, sortBy, total, isShownModal, productInfo, startDate, endDate, keywords, isLoading } = this.state
+    const { 
+      products, 
+      sortBy, 
+      total, 
+      isShownModal, 
+      productInfo, 
+      startDate, 
+      endDate, 
+      keywords, 
+      rank_min, 
+      rank_max,
+      isLoading
+    } = this.state
 
     const currentDate = new Date()
     return (
@@ -190,13 +242,15 @@ export default class Products extends Component {
             <div className="col-md-12">
               <div className="box">
                 <div className="box-header with-border pb-0">
-                  <div className="form-group row mb-0">
+                  <div className="form-group row mb-2">
                     <label className='col-form-label col-md-1'>Sort by</label>
-                    <select className='form-control col-md-2' value={sortBy} onChange={this.onChangeSortBySelect.bind(this)}>
-                      <option value="top">Top</option>
-                      <option value="newest">Newest</option>
-                      <option value="trend">Trend</option>
-                    </select>
+                    <div className="col-md-2">
+                      <select className='form-control' value={sortBy} onChange={this.onChangeSortBySelect.bind(this)}>
+                        <option value="top">Top</option>
+                        <option value="newest">Newest</option>
+                        <option value="trend">Trend</option>
+                      </select>
+                    </div>
                     <div className="col-md-7">
                       <DateRangePicker startDate={startDate || currentDate} endDate={endDate || currentDate} 
                         onApply={this.onApplyDatePicker.bind(this)} onCancel={this.onCancelDatePicker.bind(this)}>
@@ -218,8 +272,19 @@ export default class Products extends Component {
                   </div>
                   <div className="form-group row mb-0">
                     <label className='col-form-label col-md-2'>Search by keyword</label>
-                    <div className="col-md-12">
+                    <div className="col-md-10">
                       <TagInput keywords={keywords} onChangeKeywords={this.onChangeKeywords.bind(this)}  />
+                    </div>
+                  </div>
+                  <div className="form-group row mb-0">
+                    <label className='col-form-label col-md-2'>Search by rank <br/>({rank_min + ' - ' + rank_max})</label>
+                    <div className="col-md-10">
+                      <Range className='py-3 mx-2' 
+                        allowCross={false} 
+                        defaultValue={[rank_min, rank_max]} 
+                        max={RANK_MAX} 
+                        onChange={this.onChangeSlider.bind(this)} 
+                      />
                     </div>
                   </div>
                 </div>
