@@ -176,7 +176,7 @@ export default class Products extends Component {
 
   onChangeKeywords(keywords) {
     const { sortBy, startDate, endDate, rank_min, rank_max } = this.state
-    this.setState({keywords})
+    this.setState({keywords, page: 1})
     this.getListProducts(1, sortBy, startDate, endDate, keywords, rank_min, rank_max)
   }
 
