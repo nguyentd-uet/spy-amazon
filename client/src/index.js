@@ -6,6 +6,8 @@ import './index.css';
 import { BrowserRouter, Route } from 'react-router-dom';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
+import './assets/css/skins/_all-skins.min.css'
+import './assets/css/AdminLTE.min.css'
 
 ReactDOM.render(
     <BrowserRouter>

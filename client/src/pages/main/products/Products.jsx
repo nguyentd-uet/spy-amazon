@@ -279,7 +279,7 @@ export default class Products extends Component {
                   <div className="form-group row mb-0">
                     <label className='col-form-label col-md-2'>Search by rank <br/>({rank_min + ' - ' + rank_max})</label>
                     <div className="col-md-10">
-                      <Range className='py-3 mx-2' 
+                      <Range className='py-3'
                         allowCross={false} 
                         defaultValue={[rank_min, rank_max]} 
                         max={RANK_MAX} 
